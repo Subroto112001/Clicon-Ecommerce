@@ -1,5 +1,27 @@
 @import "tailwindcss";
 
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+img{
+  vertical-align: middle;
+}
+
+ul, li, ol{
+  list-style: none;
+
+}
+
+a{
+  text-decoration: none;
+  display: inline-block;
+}
+
+span, a{
+  display: inline-block;
+}
 :root {
   /* ========= gray color ========= */
 
@@ -138,6 +160,9 @@
   --font-Public: var(--font-family);
   --font-inter: var(--font-public-sans);
 }
+
+
+
 
 /* *********** Heading *********** */
 .heading1 {
@@ -411,7 +436,3 @@
 }
 
 /* *********** Body *********** */
-body {
-  background-color: var(--color-danger-800);
-  font-family: var(--font-inter);
-}
