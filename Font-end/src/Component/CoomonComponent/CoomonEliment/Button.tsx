@@ -1,5 +1,7 @@
 import React from 'react'
-import { icons } from '../../../../Helpers/IconProvider';
+
+import { icons } from '../../../Helpers/IconProvider';
+
 
  export const Button = ({ content }: { content: React.ReactNode }) => {
   return (
