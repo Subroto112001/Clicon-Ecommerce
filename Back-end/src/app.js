@@ -12,9 +12,16 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("Public"));
 
+/**
+ * todo : routes will there
+ * */
+
+const apiVersion = process.env.BASE_URL
+app.use(`/api/v1`, require("./routes/index"));
+
 
 /**
- * todo : error handle
+ * todo : error handle midleware
  * */
 
 app.use((error, req, res, next) => {
