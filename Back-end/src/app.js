@@ -25,7 +25,7 @@ app.use(`/api/v1`, require("./routes/index"));
  * */
 
 app.use((error, req, res, next) => {
-    console.log(error);
+    console.log("error from global error app",error);
     
 })
 
