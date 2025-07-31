@@ -1,6 +1,7 @@
 const express = require("express")
 const cors = require("cors")
 const cookieParser = require("cookie-parser");
+const { globalErrorHandeler } = require("./utils/globalErrorHandeler");
 const app = express()
 
 /**
@@ -24,9 +25,6 @@ app.use(`/api/v1`, require("./routes/index"));
  * todo : error handle midleware
  * */
 
-app.use((error, req, res, next) => {
-    console.log("error from global error app",error);
-    
-})
+app.use(globalErrorHandeler)
 
 module.exports = {app}

@@ -71,7 +71,7 @@ const userSchema = new Schema({
     default: "Bangladesh",
   },
   dateofBirth: {
-    type: date,
+    type: Date,
   },
   gender: {
     type: String,

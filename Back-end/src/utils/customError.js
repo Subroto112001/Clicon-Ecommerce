@@ -6,7 +6,7 @@ class customError extends Error{
         this.isOperationalError = true;
         this.message = message || "Server / Client Error";
         this.data = null;
-        Error.capturestacktrace(this, customError);
+       Error.captureStackTrace(this, customError);
 
     }
 }
