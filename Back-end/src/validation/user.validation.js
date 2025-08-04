@@ -1,3 +1,5 @@
+const { customError } = require("../utils/customError");
+
 const Joi = require("joi");
 
 const userSchema = Joi.object({
@@ -10,7 +12,7 @@ const userSchema = Joi.object({
     .required()
     .trim()
     .empty()
-    .pattern(new RegExp("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$/"))
+    .pattern(new RegExp(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/))
     .messages({
       "string.empty": "Email is required",
       "any.required": "Email is required",
@@ -23,7 +25,7 @@ const userSchema = Joi.object({
     .empty()
     .pattern(
       new RegExp(
-        "/^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,16}$/"
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,16}$/
       )
     )
     .messages({
@@ -35,5 +37,15 @@ const userSchema = Joi.object({
     }),
 }).options({
   abortEarly: true,
-  allowUnknown: true,
+  allowUnknown: true, // <<------ this function will work for allow unknown fields
 });
+
+exports.validateUser = async (req) => {
+  try {
+    const value = await userSchema.validateAsync(req.body);
+    return value;
+  } catch (error) {
+    console.log("Error from validation", 404);
+    throw new customError(404, `User validation failed ${error}`);
+  }
+};
