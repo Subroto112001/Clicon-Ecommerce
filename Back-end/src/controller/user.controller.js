@@ -7,5 +7,5 @@ const { asyncHandeler } = require("../utils/asyncHandeler")
 
 exports.registration = asyncHandeler(async (req, res) => {
     console.log(req.body);
-    throw new customError (401, "Body missing")
+  
 })
