@@ -4,6 +4,8 @@ const { customError } = require('../utils/customError')
 const { asyncHandeler } = require("../utils/asyncHandeler")
 
 const { validateUser } = require("../validation/user.validation");
+const { mailSender } = require('../helpers/helper');
+const { RegistrationMailTemplate } = require('../TemplateEmail/Template');
 
 exports.registration = asyncHandeler(async (req, res) => {
    const value = await validateUser(req);
@@ -15,9 +17,15 @@ exports.registration = asyncHandeler(async (req, res) => {
     password,
   }).save();
 
+
+
+  
   if (!user) {
     throw new customError(500, "Registration Failed")
   }
+const verificationLInk = `http://localhost:5157/verifyemail/`;
+const template = RegistrationMailTemplate(fristName, verificationLInk);
+  await mailSender(email, template);
 
   apiResponse.senSuccess(res, 201, "Registration Successfull", user)
 })
