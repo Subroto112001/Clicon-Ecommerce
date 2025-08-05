@@ -24,9 +24,7 @@ const userSchema = Joi.object({
     .trim()
     .empty()
     .pattern(
-      new RegExp(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,16}$/
-      )
+      new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,16}$/)
     )
     .messages({
       "string.empty": "Password is required",

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema, Types } = mongoose;
 const bcrypt = require("bcrypt");
+const { customError } = require("../utils/customError");
 const userSchema = new Schema({
   fristName: {
     type: String,
@@ -130,4 +131,28 @@ userSchema.pre('save', async function(next) {
     next()
 })
 
+
+
+//  chack already exist this mail
+
+
+userSchema.pre("save", async function (next) {
+  const findUser = await this.constructor.findOne({ email: this.email })
+  
+  if (findUser && findUser._id.toString() !== this._id.toString()) {
+    throw new customError(400, "User already exist try another Email")
+    
+  }
+  next()
+})
+
+
+
+
+
+
  module.exports = mongoose.model("User", userSchema)
+
+
+
+
