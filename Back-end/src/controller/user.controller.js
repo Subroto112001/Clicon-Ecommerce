@@ -7,6 +7,12 @@ const { validateUser } = require("../validation/user.validation");
 const { mailSender } = require("../helpers/helper");
 const { RegistrationMailTemplate } = require("../TemplateEmail/Template");
 const userModel = require("../models/user.model");
+const crypto = require("crypto");
+const { date } = require("joi");
+
+/**
+ * todo : registration -----> this function will work for registration
+ * */
 
 exports.registration = asyncHandeler(async (req, res) => {
   const value = await validateUser(req);
@@ -23,11 +29,21 @@ exports.registration = asyncHandeler(async (req, res) => {
   if (!user) {
     throw new customError(500, "Registration Failed");
   }
-  const verificationLInk = `http://localhost:5157/verifyemail/`;
-  const template = RegistrationMailTemplate(fristName, verificationLInk);
-  await mailSender(email, template);
 
-  apiResponse.senSuccess(res, 201, "Registration Successfull", {
+  const otp = crypto.randomInt(100000, 999999);
+  const otpExpireTime = Date.now() + 10 * 60 * 60 * 1000;
+  const verificationLInk = `http://localhost:5157/verifyemail/`;
+  const template = RegistrationMailTemplate(
+    fristName,
+    verificationLInk,
+    otp,
+    otpExpireTime
+  );
+  await mailSender(email, template);
+  user.resetPasswordOtp = otp;
+  user.resetPasswordExpireTime = otpExpireTime;
+  await user.save();
+  apiResponse.senSuccess(res, 201, "Registration Successfull Check Your Email", {
     fristName,
     email,
   });
@@ -45,24 +61,22 @@ exports.Login = asyncHandeler(async (req, res) => {
   });
   const resultOfPassword = await user.compareHashPassword(password);
   if (!resultOfPassword) {
-    throw new customError(400, "Your Password or Email is Incorrect")
-  } 
+    throw new customError(400, "Your Password or Email is Incorrect");
+  }
 
   // if password correct
   // make access token and refresh token
   const accesstoken = await user.grnerateAccessToken();
   const refreshToken = await user.grnerateRefressToken();
 
-  const isProduction = process.env.NODE_ENV === "production"; 
+  const isProduction = process.env.NODE_ENV === "production";
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: isProduction? true : false,
+    secure: isProduction ? true : false,
     sameSite: "none",
     path: "/",
     maxAge: 15 * 24 * 60 * 60 * 1000, //---->> 15days
   });
-  
-
 
   apiResponse.senSuccess(res, 200, "login Sucessfull", {
     accesstoken: accesstoken,
@@ -70,3 +84,7 @@ exports.Login = asyncHandeler(async (req, res) => {
     email: user.email,
   });
 });
+
+/**
+ * todo : Email Veryfication ---------> this fucntion will work for email veryfication
+ * */

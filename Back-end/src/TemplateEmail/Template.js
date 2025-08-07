@@ -1,4 +1,9 @@
-exports.RegistrationMailTemplate = (fristName, VERIFICATION_LINK) => {
+exports.RegistrationMailTemplate = (
+  fristName,
+  VERIFICATION_LINK,
+  otp,
+  otpExpireTime
+) => {
   return `<!DOCTYPE html>
 <html>
   <body style="font-family: Arial, sans-serif; background-color: #f2f2f2; padding: 20px;">
@@ -12,6 +17,9 @@ exports.RegistrationMailTemplate = (fristName, VERIFICATION_LINK) => {
       <p style="font-size: 16px; color: #555;">
         Thank you for registering with <strong>Clicon</strong>.
         To complete your registration, please verify your email address by clicking the button below:
+      </p>
+      <p style="font-size: 16px; color: #555;">
+      Your Otp ${otp}  and your otp will expire in ${otpExpireTime}
       </p>
 
       <div style="text-align: center; margin: 30px 0;">
