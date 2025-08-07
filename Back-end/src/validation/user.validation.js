@@ -2,14 +2,14 @@ const { customError } = require("../utils/customError");
 
 const Joi = require("joi");
 
-const userSchema = Joi.object({
-  fristName: Joi.string().required().trim().empty().messages({
+const userValidationSchema = Joi.object({
+  fristName: Joi.string().trim().empty().messages({
     "string.empty": "Name is required",
-    "any.required": "Name is required",
+
     "name.trim": "Name fill with extra spaces",
   }),
   email: Joi.string()
-    .required()
+
     .trim()
     .empty()
     .pattern(new RegExp(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/))
@@ -19,6 +19,20 @@ const userSchema = Joi.object({
       "string.trim": "Email Should not contain extra spaces",
       "string.pattern.base": "Email format is invalid",
     }),
+  phoneNumber: Joi.string()
+    .trim()
+    .optional()
+    
+    .pattern(/^(?:\+880|880|01)[3-9]\d{8}$/)
+    .messages({
+    
+      "any.required": "Phone number is required",
+      "string.trim":
+        "Phone number should not contain leading or trailing spaces",
+      "string.pattern.base":
+        "Phone number must be a valid Bangladeshi number (e.g. +88017XXXXXXXX or 017XXXXXXXX)",
+    }),
+
   password: Joi.string()
     .required()
     .trim()
@@ -40,7 +54,7 @@ const userSchema = Joi.object({
 
 exports.validateUser = async (req) => {
   try {
-    const value = await userSchema.validateAsync(req.body);
+    const value = await userValidationSchema.validateAsync(req.body);
     return value;
   } catch (error) {
     console.log("Error from validation", 404);

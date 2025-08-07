@@ -1,1 +1,1 @@
-class 17 48.49min
+class 17 1Hour:04min

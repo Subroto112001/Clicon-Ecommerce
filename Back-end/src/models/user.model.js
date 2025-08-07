@@ -1,3 +1,4 @@
+require("dotenv").config()
 const mongoose = require("mongoose");
 const { Schema, Types } = mongoose;
 const bcrypt = require("bcrypt");
@@ -22,7 +23,9 @@ const userSchema = new Schema({
     type: String,
     trim: true,
     unique: true,
-    required: true,
+  },
+  phoneNumber: {
+    type: Number,
   },
   password: {
     type: String,
@@ -144,37 +147,43 @@ userSchema.pre("save", async function (next) {
 
 // generate access token
 
-userSchema.method.grnerateAccessToken = function () {
-  const accesstoken = jwt.sign(
+userSchema.methods.grnerateAccessToken = async function () {
+ return await jwt.sign(
     {
       userid: this._id,
       email: this.email,
       role: this.role,
     },
     process.env.ACCESTOKEN_SECRET,
-    process.env.ACCESTOKEN_EXPIRE
+    { expiresIn: process.env.ACCESTOKEN_EXPIRE }
   );
-  return accesstoken;
+
 };
 
+// compare hash password
+userSchema.methods.compareHashPassword =async function (humanPass) {
+  return await bcrypt.compare(humanPass, this.password);
+}
+
+
 // generate refress token
-userSchema.method.grnerateRefressToken = function () {
-  const Refresstoken = jwt.sign(
+userSchema.methods.grnerateRefressToken =async function () {
+  return await jwt.sign(
     {
       userid: this._id,
     },
     process.env.REFRESHTOKEN_SECRET,
-    process.env.REFRESHTOKEN_EXPIRE
+   {expiresIn : process.env.REFRESHTOKEN_EXPIRE}
   );
-  return Refresstoken;
+  
 };
 
 // verify access token
-userSchema.method.VerifyAccessToken = function (token) {
+userSchema.methods.VerifyAccessToken = function (token) {
   return jwt.verify(token, process.env.ACCESTOKEN_SECRET);
 };
 // verify refress token
-userSchema.method.VerifyRefressToken = function (token) {
+userSchema.methods.VerifyRefressToken = function (token) {
   return jwt.verify(token, process.env.REFRESHTOKEN_SECRET);
 };
 
