@@ -5,7 +5,10 @@ const { asyncHandeler } = require("../utils/asyncHandeler");
 
 const { validateUser } = require("../validation/user.validation");
 const { mailSender } = require("../helpers/helper");
-const { RegistrationMailTemplate } = require("../TemplateEmail/Template");
+const {
+  RegistrationMailTemplate,
+  resetPasswordTemplate,
+} = require("../TemplateEmail/Template");
 const userModel = require("../models/user.model");
 const crypto = require("crypto");
 const { date } = require("joi");
@@ -43,10 +46,15 @@ exports.registration = asyncHandeler(async (req, res) => {
   user.resetPasswordOtp = otp;
   user.resetPasswordExpireTime = otpExpireTime;
   await user.save();
-  apiResponse.senSuccess(res, 201, "Registration Successfull Check Your Email", {
-    fristName,
-    email,
-  });
+  apiResponse.senSuccess(
+    res,
+    201,
+    "Registration Successfull Check Your Email",
+    {
+      fristName,
+      email,
+    }
+  );
 });
 
 /**
@@ -88,3 +96,92 @@ exports.Login = asyncHandeler(async (req, res) => {
 /**
  * todo : Email Veryfication ---------> this fucntion will work for email veryfication
  * */
+exports.emailVerification = asyncHandeler(async (req, res) => {
+  const { otp, email } = req.body;
+  if (!otp && !email) {
+    throw new customError(401, "Otp or Email not found");
+  }
+  const findUser = await User.findOne({
+    $and: [
+      { email: email },
+      { resetPasswordOtp: otp },
+      { resetPasswordExpireTime: { $gt: Date.now() } },
+    ],
+  });
+  if (!findUser) {
+    throw new customError(401, "Otp Or time Expire, Try Again!");
+  }
+  findUser.resetPasswordExpireTime = null;
+  findUser.resetPasswordOtp = null;
+  findUser.isEmailverifyed = true;
+  apiResponse.senSuccess(res, 200, "Email Verification Sucessfull", {
+    email: findUser.email,
+    fristName: findUser.fristName,
+  });
+  console.log(findUser);
+});
+
+/**
+ * todo : Forgot Password -------> this function will work for forgot password
+ * */
+exports.forgotPassword = asyncHandeler(async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    throw new customError(401, "Email Missing");
+  }
+
+  const user = await User.findOne({ email: email });
+  if (!user) {
+    throw new customError(401, "User not found");
+  }
+
+  // here we will geenrate a otp
+
+  const otp = crypto.randomInt(100000, 999999);
+  const otpExpireTime = Date.now() + 10 * 60 * 60 * 1000;
+  const verificationLInk = `http://localhost:5157/reset-password/${email}`;
+  const template = resetPasswordTemplate(
+    user.fristName,
+    verificationLInk,
+    otp,
+    otpExpireTime
+  );
+  await mailSender(email, template);
+  apiResponse.senSuccess(res, 301, "Check Your Email", null);
+});
+
+/**
+ * todo : Reset Password -----------> this function will work for reset password
+ **/
+exports.resetPassword = asyncHandeler(async (req, res) => {
+  const { email, newPassword, confirmPassword } = req.body;
+  
+  if (!email) {
+  throw new customError(401, "Email is missing")
+}
+  if (!newPassword) {
+    throw new customError(401, "Newpassword is missing");
+  }
+
+  if (!confirmPassword) {
+    throw new customError(401, "Confirm Password is missing");
+  }
+
+  if (newPassword !== confirmPassword) {
+    throw new customError(401, "newpassword and confirm password don't match!");
+  }
+
+
+  const user = await User.findOne({email: email})
+  if (!user) {
+  throw new customError(401, "Your Email not found!")
+}
+
+  
+  
+  user.password = newPassword
+  user.resetPasswordExpireTime = null
+  user.resetPasswordOtp = null
+  await user.save()
+  apiResponse.senSuccess(res, 200, "Password reset successfully")
+});
