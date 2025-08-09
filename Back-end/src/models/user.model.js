@@ -128,11 +128,13 @@ const userSchema = new Schema({
 
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
-    const saltPassword = await bcrypt.hash(this.password, 10);
-    this.password = saltPassword;
+    this.password = await bcrypt.hash(this.password, 10);
+   console.log(this.password);
+   
   }
   next();
 });
+
 
 //  chack already exist this mail
 
@@ -145,10 +147,17 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+
+// compare hash password
+userSchema.methods.compareHashPassword =async function (humanPass) {
+ return await bcrypt.compare(humanPass, this.password);
+}
+
+
 // generate access token
 
-userSchema.methods.grnerateAccessToken = async function () {
- return await jwt.sign(
+userSchema.methods.generateAccessToken = async function () {
+  return await jwt.sign(
     {
       userid: this._id,
       email: this.email,
@@ -157,25 +166,20 @@ userSchema.methods.grnerateAccessToken = async function () {
     process.env.ACCESTOKEN_SECRET,
     { expiresIn: process.env.ACCESTOKEN_EXPIRE }
   );
-
 };
 
-// compare hash password
-userSchema.methods.compareHashPassword =async function (humanPass) {
-  return await bcrypt.compare(humanPass, this.password);
-}
+
 
 
 // generate refress token
-userSchema.methods.grnerateRefressToken =async function () {
+userSchema.methods.generateRefreshToken = async function () {
   return await jwt.sign(
     {
       userid: this._id,
     },
     process.env.REFRESHTOKEN_SECRET,
-   {expiresIn : process.env.REFRESHTOKEN_EXPIRE}
+    { expiresIn: process.env.REFRESHTOKEN_EXPIRE }
   );
-  
 };
 
 // verify access token

@@ -22,10 +22,9 @@ const userValidationSchema = Joi.object({
   phoneNumber: Joi.string()
     .trim()
     .optional()
-    
+
     .pattern(/^(?:\+880|880|01)[3-9]\d{8}$/)
     .messages({
-    
       "any.required": "Phone number is required",
       "string.trim":
         "Phone number should not contain leading or trailing spaces",
@@ -34,16 +33,16 @@ const userValidationSchema = Joi.object({
     }),
 
   password: Joi.string()
-    .required()
     .trim()
+    .required()
     .empty()
     .pattern(
       new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,16}$/)
     )
     .messages({
       "string.empty": "Password is required",
+      "string.trim": "Password should not contain extra spaces.",
       "any.required": "Password is required",
-      "string.trim": "Password Should not contain extra spaces",
       "string.pattern.base":
         "Password msut be 8-16 characters long, include at least one number and one special character(!@#$%^&*)",
     }),
@@ -55,6 +54,8 @@ const userValidationSchema = Joi.object({
 exports.validateUser = async (req) => {
   try {
     const value = await userValidationSchema.validateAsync(req.body);
+
+    
     return value;
   } catch (error) {
     console.log("Error from validation", 404);
