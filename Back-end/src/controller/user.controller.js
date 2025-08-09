@@ -86,6 +86,11 @@ exports.Login = asyncHandeler(async (req, res) => {
     maxAge: 15 * 24 * 60 * 60 * 1000, //---->> 15days
   });
 
+  // now save the refresh token in database
+
+  user.refressToken = refreshToken;
+  await user.save();
+
   apiResponse.senSuccess(res, 200, "login Sucessfull", {
     accesstoken: accesstoken,
     usename: user.fristName,
@@ -155,10 +160,10 @@ exports.forgotPassword = asyncHandeler(async (req, res) => {
  **/
 exports.resetPassword = asyncHandeler(async (req, res) => {
   const { email, newPassword, confirmPassword } = req.body;
-  
+
   if (!email) {
-  throw new customError(401, "Email is missing")
-}
+    throw new customError(401, "Email is missing");
+  }
   if (!newPassword) {
     throw new customError(401, "Newpassword is missing");
   }
@@ -171,17 +176,19 @@ exports.resetPassword = asyncHandeler(async (req, res) => {
     throw new customError(401, "newpassword and confirm password don't match!");
   }
 
-
-  const user = await User.findOne({email: email})
+  const user = await User.findOne({ email: email });
   if (!user) {
-  throw new customError(401, "Your Email not found!")
-}
+    throw new customError(401, "Your Email not found!");
+  }
 
-  
-  
-  user.password = newPassword
-  user.resetPasswordExpireTime = null
-  user.resetPasswordOtp = null
-  await user.save()
-  apiResponse.senSuccess(res, 200, "Password reset successfully")
+  user.password = newPassword;
+  user.resetPasswordExpireTime = null;
+  user.resetPasswordOtp = null;
+  await user.save();
+  apiResponse.senSuccess(res, 200, "Password reset successfully");
 });
+
+/**
+ * todo : Logout ------------> this function will work for Log out
+ * */
+exports.logout = asyncHandeler(async (req, res) => {});
