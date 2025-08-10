@@ -32,7 +32,7 @@ const DownNavbar = () => {
                 placeholder="Search for anything..."
                 className="bg-gray-00 body-small-400 placeholder:body-small-400 w-full rounded text-gray-600 outline-none p-3! pr-15! "
               />
-              <span className="absolute top-[28%] text-gray-600 right-6 text-2xl">
+              <span className="absolute top-[28%] text-gray-600 right-6 text-2xl cursor-pointer">
                 {icons.search}
               </span>
             </Search>

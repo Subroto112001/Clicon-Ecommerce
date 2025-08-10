@@ -3,13 +3,14 @@ import { Header } from "../Component/CoomonComponent/PageCommonComponent/Header/
 import Footer from "../Component/CoomonComponent/PageCommonComponent/Footer/Index";
 import TopNavbar from "../Component/CoomonComponent/PageCommonComponent/Navbar/Index";
 import DownNavbar from "../Component/CoomonComponent/PageCommonComponent/DownNavbar";
-
+import Categorydropdown from "../Component/HomeCoomponent/CategoryDropdown/Index"
 const Home = () => {
   return (
     <>
       <Header />
       <TopNavbar />
-      <DownNavbar/>
+      <DownNavbar />
+      <Categorydropdown/>
       <Footer />
     </>
   );

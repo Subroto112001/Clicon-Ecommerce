@@ -1,7 +1,7 @@
 
 import Containere from '../../Container/Containere';
 import { icons } from '../../../../Helpers/IconProvider';
-import { useState } from 'react';
+import React, { useState } from 'react';
 const TopNavbar = () => {
 
   const [topnavIcon] = useState([
@@ -35,4 +35,4 @@ const TopNavbar = () => {
   );
 }
 
-export default TopNavbar;
+export default React.memo(TopNavbar) || TopNavbar;

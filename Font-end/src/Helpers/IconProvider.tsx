@@ -3,7 +3,7 @@ import { CiSearch } from "react-icons/ci";
 import { FaArrowRight, FaFacebook, FaHeart, FaPinterest, FaReddit, FaTwitter, FaUser, FaYoutube } from "react-icons/fa";
 import { FaSquareInstagram } from "react-icons/fa6";
 import { LuCircleHelp } from "react-icons/lu";
-import { MdSupportAgent } from "react-icons/md";
+import { MdKeyboardArrowDown, MdKeyboardArrowUp, MdLocationPin, MdSupportAgent } from "react-icons/md";
 import { RiLoopLeftFill } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
 import { TiShoppingCart } from "react-icons/ti";
@@ -26,5 +26,8 @@ export const icons = {
   help: <LuCircleHelp />,
   phone: <BsTelephoneFill />,
   cross: <RxCross2 />,
+  locationicon : <MdLocationPin />,
   rightarrow: <FaArrowRight />,
+  downArrow: <MdKeyboardArrowDown />,
+  upArrow: <MdKeyboardArrowUp />,
 };
