@@ -203,30 +203,47 @@ exports.resetPassword = asyncHandeler(async (req, res) => {
  * */
 exports.logout = asyncHandeler(async (req, res) => {
 
-// console.log("From controller",req.user);
+console.log("From controller",req.user);
 
 
   
   // now find the user
 
-  const finuser = await User.findById(req.user._id);
-console.log(finuser);
-
-  // const { refreshToken } = req.body
-  // if (!refreshToken) {
-  //   throw new customError(401, "Refresh Token not found")
-  // }
+  const finduser = await User.findById(req.user.id);
+  console.log(finduser);
+  if (!finduser) {
+    throw new customError(401, "User Not Found")
+  }
 
 
 
 
 
 
+// now clear the cookie
   
-  // res.clearCookie("refreshToken", {
-  //   httpOnly: true,
-  //   secure: isProduction ? true : false,
-  //   sameSite: "none",
-  //   path: "/",
-  // })
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: isProduction ? true : false,
+    sameSite: "none",
+    path: "/",
+  });
+
+
+  finduser.refressToken = null;
+  await finduser.save()
+  apiResponse.senSuccess(res,200, "Logout Successfull", )
 });
+
+/**
+ * todo : getme --------------> this function will show to user their data
+ * */
+exports.getme = asyncHandeler(async (req, res) => {
+  const id = req.user.id
+  const finduser = await User.findById(id);
+  console.log(finduser);
+  if (!finduser) {
+    throw new customError(401, "User not found")
+  }
+  apiResponse.senSuccess(res, 200, "User Get Successfull", finduser)
+})

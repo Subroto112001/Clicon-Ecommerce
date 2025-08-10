@@ -14,11 +14,16 @@ exports.authGurd = async(req, _, next) => {
         
         if (!findUser) {
             throw new customError(401, "User not found")
+        } else {
+            let obj = {}
+            obj.id = findUser._id;
+            obj.email = findUser.email
+            req.user = obj;
+            next();
         }
 
 
-        req.user = findUser
-        next()
+        
     } else {
         throw new customError(401, "Token not found")
     }
