@@ -15,12 +15,12 @@ const categorySchema = new Schema(
     image: {
       type: String,
       trim: true,
+      required: true,
     },
     slug: {
       type: String,
       trim: true,
       unique: true,
-     
     },
     isActive: {
       type: Boolean,
@@ -51,13 +51,13 @@ const categorySchema = new Schema(
 
 // Middleware to make slug
 categorySchema.pre("save", async function (next) {
-  if (this.isModified("name") && this.isNew("name")) {
-    const slug = await slugify(this.name, {
+  if (this.isModified("name") ) {
+    this.slug = await slugify(this.name, {
       replacement: "-",
       lower: false,
       strict: false,
     });
-    this.slug = slug;
+   
   }
   next();
 });
