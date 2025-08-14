@@ -247,3 +247,36 @@ exports.getme = asyncHandeler(async (req, res) => {
   }
   apiResponse.senSuccess(res, 200, "User Get Successfull", finduser)
 })
+
+/**
+ * todo : refreshtoken -----> making a refresh token and save it database
+ * */
+
+exports.getrefreshtoken = asyncHandeler(async (req, res) => {
+
+
+  const token = req.headers.cookie.replace("refreshToken=", " ");
+  console.log(token);
+  
+
+  if (!token) {
+    throw new customError(401, "Token not found");
+  }
+
+  const finduser = await User.findOne({ refressToken: token });
+
+  
+  if (!finduser) {
+    throw new customError(401, "user not found")
+  }
+
+
+
+  const accesstoken = finduser.generateAccessToken()
+  
+   apiResponse.senSuccess(res, 200, "Login Successful", {
+     accessToken: accesstoken,
+     username: finduser.fristName,
+     email: finduser.email,
+   });
+})

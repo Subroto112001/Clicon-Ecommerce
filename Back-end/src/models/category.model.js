@@ -51,13 +51,12 @@ const categorySchema = new Schema(
 
 // Middleware to make slug
 categorySchema.pre("save", async function (next) {
-  if (this.isModified("name") ) {
+  if (this.isModified("name")) {
     this.slug = await slugify(this.name, {
       replacement: "-",
       lower: false,
       strict: false,
     });
-   
   }
   next();
 });
@@ -67,7 +66,6 @@ categorySchema.pre("save", async function (next) {
   const findCategory = await this.constructor.findOne({ slug: this.slug });
 
   if (findCategory && findCategory._id.toString() !== this._id.toString()) {
-  
     throw new customError(400, "Category name already exists");
   }
   next();
