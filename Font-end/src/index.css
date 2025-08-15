@@ -1,4 +1,8 @@
 @import "tailwindcss";
+/* swipper */
+@import "swiper/css";
+
+/* swipper */
 
 * {
   margin: 0;

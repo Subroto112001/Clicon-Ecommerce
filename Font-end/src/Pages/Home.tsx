@@ -4,13 +4,15 @@ import Footer from "../Component/CoomonComponent/PageCommonComponent/Footer/Inde
 import TopNavbar from "../Component/CoomonComponent/PageCommonComponent/Navbar/Index";
 import DownNavbar from "../Component/CoomonComponent/PageCommonComponent/DownNavbar";
 import Categorydropdown from "../Component/HomeCoomponent/CategoryDropdown/Index"
+import Banner from "../Component/HomeCoomponent/Banner/Index";
 const Home = () => {
   return (
     <>
       <Header />
       <TopNavbar />
       <DownNavbar />
-      <Categorydropdown/>
+      <Categorydropdown />
+      <Banner/>
       <Footer />
     </>
   );
