@@ -461,3 +461,16 @@ a {
   margin: auto;
 }
 /* conatiner */
+
+/* swiper pagination */
+.swiper-pagination{
+position: absolute !important;
+left: -40% !important;
+bottom: 10% !important;
+
+}
+
+.swiper-pagination-bullet-active{
+  background-color: var(--color-gray-700) !important;
+}
+/* swiper pagination */
