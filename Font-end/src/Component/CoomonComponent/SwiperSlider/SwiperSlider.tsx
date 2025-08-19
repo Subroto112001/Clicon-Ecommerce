@@ -21,7 +21,7 @@ const SwiperSlider: React.FC<propsType> = ({
   data,
   slideCount,
 }) => {
-  console.log(data);
+ 
 
   return (
     <div>
@@ -39,8 +39,8 @@ const SwiperSlider: React.FC<propsType> = ({
         autoplay={{ delay: 4500, disableOnInteraction: false }}
         pagination={{ clickable: true }}
         scrollbar={{ draggable: true }}
-        onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log("slide change")}
+      
+      
       >
         {data?.map((item, index) => (
           <SwiperSlide key={index}>

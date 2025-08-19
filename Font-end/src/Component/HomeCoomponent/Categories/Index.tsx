@@ -33,12 +33,12 @@ const Categories = () => {
     {
       id: 5,
       name: "Accessories",
-      images: shopbycategoryImageHolder.Keyboard,
+      images: shopbycategoryImageHolder.Camera,
     },
     {
       id: 6,
-      name: "Camera & Photo",
-      images: shopbycategoryImageHolder.Camera,
+      name: "TV & Homes",
+      images: shopbycategoryImageHolder.Televison,
     },
     {
       id: 7,

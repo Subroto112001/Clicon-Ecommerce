@@ -44,7 +44,7 @@ const CliconFeatures = () => {
       <Containere>
         <div className="p-[32px]! border rounded-[6px] border-gray-100 flex flex-row  justify-between">
           {featuresInformation.map((items) => (
-            <div className="flex flex-row gap-4 items-center cursor-pointer">
+            <div className="flex flex-row gap-4 items-center cursor-pointer" key={items.id}>
               <span className="text-[40px]">{items.icons}</span>
               <div className="flex flex-col gap-1">
                 <h3 className="label3 text-gray-900">{items.title}</h3>

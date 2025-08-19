@@ -6,6 +6,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 // @ts-ignore
 import "swiper/css/navigation";
+import { categoriesarrow } from "../../../Helpers/IconProvider";
+
 
 interface propsType {
   data: any[];
@@ -17,27 +19,37 @@ const CommonSLider: React.FC<propsType> = ({
   titlestyle,
   imagestyle,
 }) => {
+  
   return (
-    <div>
+    <div className="relative">
       <Swiper
-        // install Swiper modules
         modules={[Navigation, Scrollbar, A11y]}
-        spaceBetween={50}
+        spaceBetween={20}
         slidesPerView={6}
-        navigation
+        loop={true}
+        navigation={{
+          nextEl: ".custom-next",
+          prevEl: ".custom-prev",
+        }}
         scrollbar={{ draggable: true }}
-        onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log("slide change")}
       >
         {data?.map((item) => (
-          <SwiperSlide>
-            <div className={imagestyle} key={item.id}>
+          <SwiperSlide key={item.id}>
+            <div className={imagestyle}>
               <img src={item.images} alt={item.images} />
               <p className={titlestyle}>{item.name}</p>
             </div>
           </SwiperSlide>
         ))}
       </Swiper>
+
+      {/* Custom buttons */}
+      <div className="custom-prev w-10 h-10 bg-primary-500 hover:bg-primary-400 text-white rounded-full flex items-center justify-center cursor-pointer absolute top-1/2 left-[-19px] -translate-y-1/2 z-10">
+        {categoriesarrow.prev}
+      </div>
+      <div className="custom-next w-10 h-10 bg-primary-500 hover:bg-primary-400 text-white rounded-full flex items-center justify-center cursor-pointer absolute top-1/2 right-[-19px] -translate-y-1/2 z-10">
+        {categoriesarrow.next}
+      </div>
     </div>
   );
 };
