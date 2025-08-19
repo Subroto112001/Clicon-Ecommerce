@@ -70,7 +70,7 @@ const Categorydropdown = () => {
                 {tranAndOthers.map((item) => (
                   <div
                     key={item.id}
-                    className="flex flex-row justify-center items-center gap-[11px] body-small-400 text-gray-600"
+                    className="flex flex-row justify-center items-center gap-[11px] body-small-400 text-gray-600 cursor-pointer"
                   >
                     <span>{item.icons}</span>
                     <span>{item.name}</span>
@@ -81,7 +81,7 @@ const Categorydropdown = () => {
           </div>
 
           {/* contact section */}
-          <div className=" text-gray-900 body-large-400 flex justify-end gap-2">
+          <div className=" text-gray-900 body-large-400 flex justify-end gap-2 cursor-pointer">
             <span>{icons.phone}</span>
             <span>+1-202-555-0104</span>
           </div>

@@ -5,6 +5,8 @@ import TopNavbar from "../Component/CoomonComponent/PageCommonComponent/Navbar/I
 import DownNavbar from "../Component/CoomonComponent/PageCommonComponent/DownNavbar";
 import Categorydropdown from "../Component/HomeCoomponent/CategoryDropdown/Index"
 import Banner from "../Component/HomeCoomponent/Banner/Index";
+import Categories from "../Component/HomeCoomponent/Categories/Index";
+import CliconFeatures from "../Component/HomeCoomponent/CliconFeatures/Index";
 const Home = () => {
   return (
     <>
@@ -12,10 +14,12 @@ const Home = () => {
       <TopNavbar />
       <DownNavbar />
       <Categorydropdown />
-      <Banner/>
+      <Banner />
+      <CliconFeatures/>
+      <Categories />
       <Footer />
     </>
   );
 };
 
-export default Home;
+export default React.memo(Home);

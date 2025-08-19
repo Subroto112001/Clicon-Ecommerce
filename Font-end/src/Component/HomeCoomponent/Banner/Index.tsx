@@ -11,7 +11,7 @@ const Banner = () => {
       <div className="!py-10">
         <Containere>
           <div className="grid grid-cols-[2fr_1fr] gap-5">
-            <div className="rounded w-[900px] h-[540px]">
+            <div className="rounded w-[900px] h-[550px]">
               <SwiperSlider animationStyle="flip" ispagination={true}>
                 <img
                   src={assets.BannerLeft}
@@ -20,7 +20,7 @@ const Banner = () => {
                 />
               </SwiperSlider>
             </div>
-            <div className="grid grid-rows-2 justify-items-stretch gap-y-5 ">
+            <div className="grid grid-rows-2 justify-items-stretch gap-y-1 ">
               <div className=" rounded w-[400px] h-[300px] ">
                 <SwiperSlider animationStyle="cards" ispagination={true}>
                   <img

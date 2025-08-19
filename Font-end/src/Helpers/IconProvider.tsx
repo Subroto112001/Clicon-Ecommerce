@@ -1,11 +1,12 @@
 import { BsTelephoneFill } from "react-icons/bs";
-import { CiSearch } from "react-icons/ci";
+import { CiCreditCard1, CiHeadphones, CiSearch, CiTrophy } from "react-icons/ci";
 import { FaArrowRight, FaFacebook, FaHeart, FaPinterest, FaReddit, FaTwitter, FaUser, FaYoutube } from "react-icons/fa";
 import { FaSquareInstagram } from "react-icons/fa6";
 import { LuCircleHelp } from "react-icons/lu";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp, MdLocationPin, MdSupportAgent } from "react-icons/md";
 import { RiLoopLeftFill } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
+import { TfiPackage } from "react-icons/tfi";
 import { TiShoppingCart } from "react-icons/ti";
 
 
@@ -26,8 +27,12 @@ export const icons = {
   help: <LuCircleHelp />,
   phone: <BsTelephoneFill />,
   cross: <RxCross2 />,
-  locationicon : <MdLocationPin />,
+  locationicon: <MdLocationPin />,
   rightarrow: <FaArrowRight />,
   downArrow: <MdKeyboardArrowDown />,
   upArrow: <MdKeyboardArrowUp />,
+  delivery: <TfiPackage />,
+  trophy: <CiTrophy />,
+  creditcard: <CiCreditCard1 />,
+  support: <CiHeadphones />,
 };

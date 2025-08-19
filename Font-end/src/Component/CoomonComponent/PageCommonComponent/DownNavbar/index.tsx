@@ -16,10 +16,14 @@ const DownNavbar = () => {
   return (
     <div className="bg-secondary-700 py-4! border-t-2 border-t-[#3F7CA3]">
       <Containere>
-        <div className="grid grid-cols-3 items-center ">
+        <div className="grid grid-cols-3 items-center">
           <div>
             <picture>
-              <img src={assets.Logo} alt={assets.Logo} />
+              <img
+                src={assets.Logo}
+                alt={assets.Logo}
+                className=" cursor-pointer"
+              />
             </picture>
           </div>
           {/* search part is here */}
@@ -40,9 +44,15 @@ const DownNavbar = () => {
           {/* search part is here */}
           {/* cart wishlist and accoutn icon is here */}
           <div className="flex justify-end items-center gap-6 ">
-            <span className="text-gray-00 text-3xl">{icons.cart}</span>
-            <span className="text-gray-00 text-2xl">{icons.heart}</span>
-            <span className="text-gray-00 text-2xl">{icons.user}</span>
+            <span className="text-gray-00 hover:text-gray-200 text-3xl cursor-pointer">
+              {icons.cart}
+            </span>
+            <span className="text-gray-00 hover:text-gray-200 text-2xl cursor-pointer">
+              {icons.heart}
+            </span>
+            <span className="text-gray-00 hover:text-gray-200 text-2xl cursor-pointer">
+              {icons.user}
+            </span>
           </div>
           {/* cart wishlist and accoutn icon is here */}
         </div>
