@@ -30,6 +30,7 @@ exports.registration = asyncHandeler(async (req, res) => {
     email: email || null,
     phoneNumber: phoneNumber || null,
     password,
+
   }).save();
 
   if (!user) {
@@ -47,12 +48,12 @@ exports.registration = asyncHandeler(async (req, res) => {
       otpExpireTime
     );
 
-   try {
-     await mailSender(email, template);
-   } catch (error) {
-     console.error("Email sending failed:", error);
-     // Don't throw error, continue with registration
-   }
+    try {
+      await mailSender(email, template);
+    } catch (error) {
+      console.error("Email sending failed:", error);
+      // Don't throw error, continue with registration
+    }
   }
 
   // phone number
@@ -65,9 +66,7 @@ your code is ${otp} and it will expire on ${new Date(
       otpExpireTime
     ).toLocaleString()}
 -Clicon`;
-    
-    
-    
+
     // that is not working... 31mi in video
     try {
       const smsResponse = await smsSender(phoneNumber, smsBody);
@@ -143,37 +142,76 @@ exports.Login = asyncHandeler(async (req, res) => {
  * */
 exports.VerificationUserContact = asyncHandeler(async (req, res) => {
   const { otp, email, phoneNumber } = req.body;
-  if (!otp && !email) {
-    throw new customError(401, "Otp or Email not found");
+  if (!otp || (!email && !phoneNumber)) {
+    throw new customError(401, "Otp and  Email or Phone Number not found");
   }
+  /**
+   *title : Query system add
+   *@desc : this query system will help to find user by email or phone number. it hold just one if user use phone number or email for verification
+   */
+  const query = {
+    resetPasswordOtp: otp,
+    resetPasswordExpireTime: { $gt: Date.now() },
+    $or: [],
+  };
+
   if (email) {
-     const findUser = await User.findOne({
-       $and: [
-         { email: email },
-         { resetPasswordOtp: otp },
-         { resetPasswordExpireTime: { $gt: Date.now() } },
-       ],
-     });
-     if (!findUser) {
-       throw new customError(401, "Otp Or time Expire, Try Again!");
-     }
+    query.$or.push({ email });
   }
   if (phoneNumber) {
-    const findUser = await User.findOne({
-      $and: [
-        { phoneNumber: phoneNumber },
-        { resetPasswordOtp: otp },
-        { resetPasswordExpireTime: { $gt: Date.now() } },
-      ],
-    });
-    if (!findUser) {
-      throw new customError(401, "Otp Or time Expire, Try Again!");
-    }
+    query.$or.push({ phoneNumber });
   }
- 
+
+  const findUser = await User.findOne(query);
+
+
+  // start
+   if (!findUser) {
+     // 👉 OTP invalid বা expired হলে নতুন OTP পাঠাও
+     const user = await User.findOne({
+       $or: [{ email }, { phoneNumber }],
+     });
+
+     if (!user) {
+       throw new customError(404, "User not found");
+     }
+
+     const newOtp = Math.floor(100000 + Math.random() * 900000); // 6 digit OTP
+     user.resetPasswordOtp = newOtp;
+     user.resetPasswordExpireTime = Date.now() + 10 * 60 * 1000; // 10 মিনিট
+     await user.save();
+
+     if (email) {
+       await mailSender(
+         user.email,
+         "Your Verification OTP",
+         `Your OTP is ${newOtp}`
+       );
+     }
+     if (phoneNumber) {
+       await smsSender(user.phoneNumber, `Your OTP is ${newOtp}`);
+     }
+
+     throw new customError(
+       401,
+       "Invalid or expired OTP. A new OTP has been sent."
+     );
+     
+   }
+  // end
+  
+  //@desc after using this data to verify
   findUser.resetPasswordExpireTime = null;
   findUser.resetPasswordOtp = null;
-  findUser.isEmailverifyed = true;
+ if (email) {
+   findUser.isEmailverifyed = true;
+ }
+ if (phoneNumber) {
+   findUser.isPhoneVerifyed = true;
+ }
+
+
+  await findUser.save();
   apiResponse.senSuccess(res, 200, "Email Verification Sucessfull", {
     email: findUser.email,
     fristName: findUser.fristName,
