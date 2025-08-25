@@ -4,5 +4,6 @@ const categorymodel = require('../models/category.model')
 
 exports.createCategory = asyncHandeler(async (req, res) => {
     await validateCategory(req);
+  
     
 })

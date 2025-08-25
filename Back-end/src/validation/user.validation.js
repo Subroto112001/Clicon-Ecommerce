@@ -19,17 +19,13 @@ const userValidationSchema = Joi.object({
       "string.trim": "Email Should not contain extra spaces",
       "string.pattern.base": "Email format is invalid",
     }),
+  // In your validation file
   phoneNumber: Joi.string()
-    .trim()
-    .optional()
-
-    .pattern(/^(?:\+880|880|01)[3-9]\d{8}$/)
-    .messages({
-      "any.required": "Phone number is required",
-      "string.trim":
-        "Phone number should not contain leading or trailing spaces",
-      "string.pattern.base":
-        "Phone number must be a valid Bangladeshi number (e.g. +88017XXXXXXXX or 017XXXXXXXX)",
+    .pattern(/^(\+88|88)?01[3-9]\d{8}$/)
+    .when("email", {
+      is: Joi.exist(),
+      then: Joi.optional(),
+      otherwise: Joi.required(),
     }),
 
   password: Joi.string()

@@ -6,7 +6,7 @@ const { authGurd } = require("../../midleware/authgurd.Middleware");
 
 _.route("/registartion").post(authController.registration);
 _.route("/login").post(authController.Login);
-_.route("/verify-email").post(authController.emailVerification);
+_.route("/verify-email").post(authController.VerificationUserContact);
 _.route("/forgot-password").post(authController.forgotPassword)
 _.route("/reset-password").post(authController.resetPassword)
 _.route("/logout").post(authGurd, authController.logout);
