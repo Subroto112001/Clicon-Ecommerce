@@ -65,7 +65,7 @@ Your code is ${otp} and it will expire on ${new Date(
       otpExpireTime
     ).toLocaleString()}
 -Clicon`;
-    
+
     // that is not working... 31mi in video
     try {
       const smsResponse = await smsSender(phoneNumber, smsBody);
@@ -113,6 +113,86 @@ exports.Login = asyncHandeler(async (req, res) => {
   const resultOfPassword = await user.compareHashPassword(password);
   if (!resultOfPassword) {
     throw new customError(400, "Your Password or Email is Incorrect");
+  }
+
+  // now we will check there that email or phoneNumber verified or not
+
+  const loginMethod = email? "email" : "phoneNumber";
+  let isVerified = false;
+
+
+  if (email && user.email) {
+    isVerified = user.isEmailverifyed|| false;
+  } else {
+    isVerified = user.isPhoneVerifyed ||false
+  }
+
+  // if we found not verified then
+
+  if(!isVerified) {
+  const otp = crypto.randomInt(100000, 999999);
+    const otpExpireTime = Date.now() + 10 * 60 * 1000;
+    
+    if (email && user.email) {
+       const verificationLInk = `http://localhost:5157/verifyemail/${email}`;
+       const template = RegistrationMailTemplate(
+         fristName,
+         verificationLInk,
+         otp,
+         otpExpireTime
+      );
+       try {
+         await mailSender(email, template);
+       } catch (error) {
+         console.error("Email sending failed:", error);
+        throw new customError(400, 'Email Sending Failed, Try Again', error);
+       }
+    }
+    
+
+    if (phoneNumber && user.phoneNumber) {
+        const smsBody = `Hey ${user.fristName} 
+Your verification code is ${otp} and it will expire on ${new Date(
+          otpExpireTime
+        ).toLocaleString()}
+-Clicon`;
+
+        try {
+          const smsResponse = await smsSender(phoneNumber, smsBody);
+          console.log("SMS Response:", smsResponse);
+        } catch (error) {
+          console.error("SMS sending failed:", error);
+          throw new customError(400,' SMS sending Failed');
+        }
+    }
+
+     await userModel.updateOne(
+       { _id: user._id },
+       {
+         resetPasswordOtp: otp,
+         resetPasswordExpireTime: otpExpireTime,
+       }
+     );
+
+
+return apiResponse.senSuccess(
+  res,
+  200,
+  "Account not verified. Verification code sent.",
+  {
+    verified: false,
+    verificationMethod: loginMethod,
+    message:
+      loginMethod === "email"
+        ? "Please check your email for verification code"
+        : "Please check your phone for verification code",
+    maskedContact:
+      loginMethod === "email"
+        ? email.replace(/(.{2})(.*)(@.*)/, "$1***$3")
+        : phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, "$1****$3"),
+  }
+);
+
   }
 
   const accessToken = await user.generateAccessToken();
