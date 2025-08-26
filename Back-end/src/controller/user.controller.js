@@ -2,7 +2,7 @@ const User = require("../models/user.model");
 const { apiResponse } = require("../utils/apiResponse");
 const { customError } = require("../utils/customError");
 const { asyncHandeler } = require("../utils/asyncHandeler");
-
+const { default: axios } = require("axios");
 const { validateUser } = require("../validation/user.validation");
 const { mailSender, smsSender } = require("../helpers/helper");
 const {
@@ -30,7 +30,6 @@ exports.registration = asyncHandeler(async (req, res) => {
     email: email || null,
     phoneNumber: phoneNumber || null,
     password,
-
   }).save();
 
   if (!user) {
@@ -62,11 +61,11 @@ exports.registration = asyncHandeler(async (req, res) => {
     const verificationLInk = `http://localhost:5157/verifyphone/${phoneNumber}`;
 
     const smsBody = `Hey ${fristName} 
-your code is ${otp} and it will expire on ${new Date(
+Your code is ${otp} and it will expire on ${new Date(
       otpExpireTime
     ).toLocaleString()}
 -Clicon`;
-
+    
     // that is not working... 31mi in video
     try {
       const smsResponse = await smsSender(phoneNumber, smsBody);
@@ -138,7 +137,7 @@ exports.Login = asyncHandeler(async (req, res) => {
 });
 
 /**
- * todo : Email Veryfication ---------> this fucntion will work for email veryfication
+ * todo : Email and Phone Number verification ---------> this fucntion will work for email verification and Phone number verification
  * */
 exports.VerificationUserContact = asyncHandeler(async (req, res) => {
   const { otp, email, phoneNumber } = req.body;
@@ -164,52 +163,49 @@ exports.VerificationUserContact = asyncHandeler(async (req, res) => {
 
   const findUser = await User.findOne(query);
 
-
   // start
-   if (!findUser) {
-     // 👉 OTP invalid বা expired হলে নতুন OTP পাঠাও
-     const user = await User.findOne({
-       $or: [{ email }, { phoneNumber }],
-     });
+  if (!findUser) {
+    //  if there geeting otp invalid and expeire time .
+    const user = await User.findOne({
+      $or: [{ email }, { phoneNumber }],
+    });
 
-     if (!user) {
-       throw new customError(404, "User not found");
-     }
+    if (!user) {
+      throw new customError(404, "User not found");
+    }
 
-     const newOtp = Math.floor(100000 + Math.random() * 900000); // 6 digit OTP
-     user.resetPasswordOtp = newOtp;
-     user.resetPasswordExpireTime = Date.now() + 10 * 60 * 1000; // 10 মিনিট
-     await user.save();
+    const newOtp = Math.floor(100000 + Math.random() * 900000);
+    user.resetPasswordOtp = newOtp;
+    user.resetPasswordExpireTime = Date.now() + 10 * 60 * 1000;
+    await user.save();
 
-     if (email) {
-       await mailSender(
-         user.email,
-         "Your Verification OTP",
-         `Your OTP is ${newOtp}`
-       );
-     }
-     if (phoneNumber) {
-       await smsSender(user.phoneNumber, `Your OTP is ${newOtp}`);
-     }
+    if (email) {
+      await mailSender(
+        user.email,
+        "Your Verification OTP",
+        `Your OTP is ${newOtp}`
+      );
+    }
+    if (phoneNumber) {
+      await smsSender(user.phoneNumber, `Your OTP is ${newOtp}`);
+    }
 
-     throw new customError(
-       401,
-       "Invalid or expired OTP. A new OTP has been sent."
-     );
-     
-   }
+    throw new customError(
+      401,
+      "Invalid or expired OTP. A new OTP has been sent."
+    );
+  }
   // end
-  
+
   //@desc after using this data to verify
   findUser.resetPasswordExpireTime = null;
   findUser.resetPasswordOtp = null;
- if (email) {
-   findUser.isEmailverifyed = true;
- }
- if (phoneNumber) {
-   findUser.isPhoneVerifyed = true;
- }
-
+  if (email) {
+    findUser.isEmailverifyed = true;
+  }
+  if (phoneNumber) {
+    findUser.isPhoneVerifyed = true;
+  }
 
   await findUser.save();
   apiResponse.senSuccess(res, 200, "Email Verification Sucessfull", {

@@ -1,0 +1,9 @@
+{
+	"throw Error": {
+		"prefix": "@throwError",
+		"body": [
+			"throw new customError('$1');"
+		],
+		"description": "Throw an error with a custom message"
+	}
+}

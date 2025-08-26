@@ -25,7 +25,7 @@ const userSchema = new Schema({
     unique: true,
   },
   phoneNumber: {
-    type: Number,
+    type: String,
   },
   password: {
     type: String,
@@ -46,6 +46,7 @@ const userSchema = new Schema({
   },
   isPhoneVerifyed: {
     type: Boolean,
+    default: false,
   },
   role: {
     type: Types.ObjectId,
@@ -124,7 +125,7 @@ const userSchema = new Schema({
   },
 });
 
-// schema model middleware
+// @desc schema model middleware
 
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
@@ -136,7 +137,7 @@ userSchema.pre("save", async function (next) {
 });
 
 
-//  chack already exist this mail
+// @desc check already exist this mail
 
 userSchema.pre("save", async function (next) {
   const findUser = await this.constructor.findOne({ email: this.email });
@@ -148,13 +149,13 @@ userSchema.pre("save", async function (next) {
 });
 
 
-// compare hash password
+// @desc compare hash password
 userSchema.methods.compareHashPassword =async function (humanPass) {
  return await bcrypt.compare(humanPass, this.password);
 }
 
 
-// generate access token
+// @desc generate access token
 
 userSchema.methods.generateAccessToken = async function () {
   return await jwt.sign(
@@ -171,7 +172,7 @@ userSchema.methods.generateAccessToken = async function () {
 
 
 
-// generate refress token
+// @desc generate refress token
 userSchema.methods.generateRefreshToken = async function () {
   return await jwt.sign(
     {
@@ -182,11 +183,11 @@ userSchema.methods.generateRefreshToken = async function () {
   );
 };
 
-// verify access token
+// @desc verify access token
 userSchema.methods.VerifyAccessToken = function (token) {
   return jwt.verify(token, process.env.ACCESTOKEN_SECRET);
 };
-// verify refress token
+// @desc verify refress token
 userSchema.methods.VerifyRefressToken = function (token) {
   return jwt.verify(token, process.env.REFRESHTOKEN_SECRET);
 };

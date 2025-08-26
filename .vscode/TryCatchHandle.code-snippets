@@ -1,0 +1,15 @@
+{
+  "Try Catch": {
+    "scope": "javascript,typescript",
+    "prefix": "trycatch",
+    "body": [
+      "try {",
+      "\t$1",
+      "} catch (error) {",
+      "\tconsole.error('Error:', error);",
+      "\tthrow new customError();",
+      "}"
+    ],
+    "description": "Wrap code in a try-catch block"
+  }
+}

@@ -2,7 +2,6 @@ const nodemailer = require("nodemailer");
 const { customError } = require("../utils/customError");
 const { default: axios } = require("axios");
 
-
 require("dotenv").config();
 
 // Create a test account or replace with real credentials.
@@ -28,21 +27,19 @@ exports.mailSender = async (email, template) => {
   console.log("Message sent:", info.messageId);
 };
 
-
 // sms sender
 
 exports.smsSender = async (phoneNumber, message) => {
   try {
-  const smsResponsefromsender = await axios.post(process.env.SMS_API_URL, {
-    api_key: process.env.SMS_API_KEY,
-    senderid: process.env.SMS_SENDER_ID,
-    number: Array.isArray(phoneNumber) ? phoneNumber.join(",") : phoneNumber,
-    message: message,
-  });
+    const smsResponsefromsender = await axios.post(process.env.SMS_API_URL, {
+      api_key: process.env.SMS_API_KEY,
+      senderid: process.env.SMS_SENDER_ID,
+      number: Array.isArray(phoneNumber) ? phoneNumber.join(",") : phoneNumber,
+      message: message,
+    });
     return smsResponsefromsender.data;
   } catch (error) {
     console.log("error from send sms", error);
-    throw new customError(500,"Error from bulk sms", error)
-    
+    throw new customError(500, "Error from bulk sms", error);
   }
-}
+};
