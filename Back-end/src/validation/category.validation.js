@@ -44,11 +44,11 @@ exports.validateCategory = async (req) => {
      *@desc: here check file size
      */
 
-    if (req?.files?.image[0]?.size > 5120) {
+    if (req?.files?.image[0]?.size >= 10*1024 *1024) {
       throw new customError(401, "image size below 5MB");
     }
 
-    return value;
+    return {name: value.name, image : req?.files?.image[0]};
   } catch (error) {
     if (error.details) {
       console.log("Error from category validation", error.details[0].message);
