@@ -32,15 +32,6 @@ const categorySchema = new Schema(
       type: Types.ObjectId,
       ref: "Discount",
     },
-    color: {
-      type: String,
-      default: "purple",
-      trim: true,
-    },
-    icon: {
-      type: String,
-      trim: true,
-    },
   },
   { timestamps: true }
 );

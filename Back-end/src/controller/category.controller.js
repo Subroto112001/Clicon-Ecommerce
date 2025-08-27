@@ -4,6 +4,7 @@ const categorymodel = require("../models/category.model");
 const {
   uploadImageColude,
   deleteColudinaryImage,
+  deleteCloudinaryFile,
 } = require("../helpers/Coludinary");
 const { apiResponse } = require("../utils/apiResponse");
 const { customError } = require("../utils/customError");
@@ -65,32 +66,53 @@ exports.getSingleCategory = asyncHandeler(async (req, res) => {
 // @desc update single category
 exports.updateSingleCategory = asyncHandeler(async (req, res) => {
   const { slug } = req.params;
-
-  const findCategory = await categorymodel.findOne({ slug });
-  if (!findCategory) {
-    throw new customError(400, "Not found category name");
-  }
-  console.log(findCategory);
+  if (!slug) throw new customError(401, "slug not found !!");
+  const foundCAtegory = await categorymodel.findOne({ slug });
+  if (!foundCAtegory) throw new customError(501, "Don't Found Any Category !!");
 
   if (req.body.name) {
-    findCategory.name = req.body.name;
+    foundCAtegory.name = req.body.name;
   }
-  if (req?.files?.image?.length) {
-    const deletedItem = await deleteColudinaryImage(
-      findCategory.image?.public_id
+  if (req?.files.image?.length) {
+    // delete
+    const deletedItem = await deleteCloudinaryFile(
+      foundCAtegory.image.publicIP
     );
-    if (!deletedItem) {
-      throw new customError(500, "Not deleted image from cloudinary");
-    }
-    console.log(deletedItem);
-    const UpdateImage = await uploadImageColude(req?.files?.image[0].path);
-    findCategory.image = UpdateImage;
+    if (!deletedItem) throw new customError(401, "Image Deletion Failed !!");
+    const image = await uploadImageColude(req?.files.image[0].path);
+    foundCAtegory.image = image;
   }
-  const updateCategory = await findCategory.save();
+
+  await foundCAtegory.save();
+  apiResponse.senSuccess(res, 200, "category update successful", foundCAtegory);
+});
+
+// @desc delete single category
+exports.deleteSingleCategory = asyncHandeler(async (req, res) => {
+  const { slug } = req.params;
+  if (!slug) {
+    throw new customError(401, "Slug Not Found");
+  }
+  const findCategory = await categorymodel.findOneAndDelete({ slug });
+
+  if (!findCategory) {
+    throw new customError(404, " Category not found");
+  }
+ 
+
+  // now delete here the category
+
+  const deletedCategoryItem = await deleteCloudinaryFile(
+    findCategory.image.publicIP
+  );
+  if (!deletedCategoryItem) {
+    throw new customError(401, "Image Deletion Failed !!");
+  }
+
   apiResponse.senSuccess(
     res,
     200,
-    "Single category updated successfully",
-    updateCategory
+    "Category deleted successfully",
+    findCategory
   );
 });
