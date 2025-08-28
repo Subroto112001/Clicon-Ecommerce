@@ -14,10 +14,7 @@ const brandSchema = new Schema(
     slug: {
       type: String,
     },
-    image: {
-      type: String,
-      trim: true,
-    },
+    image: {},
     isActive: {
       type: Boolean,
       default: true,

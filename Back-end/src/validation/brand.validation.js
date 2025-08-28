@@ -26,6 +26,7 @@ exports.validateBrand = async (req) => {
     /**
      * @desc Check if file exists
      */
+    
     if (!req.files?.image || req.files?.image?.length === 0) {
       throw new customError(401, "Brand image not found");
     }
