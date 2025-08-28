@@ -30,13 +30,37 @@ exports.createCategory = asyncHandeler(async (req, res) => {
 
 // @desc get all category function
 exports.getAllCategory = asyncHandeler(async (req, res) => {
-  const allCategory = await categorymodel.find().sort({ createdAt: -1 });
+  // pipeline aggregration
+  const allCategory = await categorymodel.aggregate([
+    {
+      $lookup: {
+        from: "subcategories", // database model name
+        localField: "subCategory", //category holder name
+        foreignField: "_id", // subcategory model id
+        as: "subCategoryholder", // wich name you will sotre it
+      },
+    },
+    {
+      $project: {
+        name: 1,
+        image: 1,
+        isActive: 1,
+        createdAt: 1,
+        slug: 1,
+        subCategoryholder: 1,
+      },
+    },
+    {$sort: {createdAt: -1}}
+  ]);
+
+  // error throw
 
   if (!allCategory) {
     throw new customError(404, "No categories found");
   }
 
   console.log(allCategory);
+  // response
 
   apiResponse.senSuccess(
     res,
@@ -49,7 +73,9 @@ exports.getAllCategory = asyncHandeler(async (req, res) => {
 // @desc get single category function
 exports.getSingleCategory = asyncHandeler(async (req, res) => {
   const { slug } = req.params;
-  const SingleCategoryItem = await categorymodel.findOne({ slug });
+  const SingleCategoryItem = await categorymodel
+    .findOne({ slug })
+    .populate("subCategory");
   if (!SingleCategoryItem) {
     throw new customError(500, "No category found here");
   }
@@ -98,7 +124,6 @@ exports.deleteSingleCategory = asyncHandeler(async (req, res) => {
   if (!findCategory) {
     throw new customError(404, " Category not found");
   }
- 
 
   // now delete here the category
 
