@@ -1,0 +1,173 @@
+require("dotenv").config();
+const mongoose = require("mongoose");
+const { Schema, Types } = mongoose;
+const slugify = require("slugify");
+const { customError } = require("../utils/customError");
+
+const productSchema = new Schema(
+  {
+    name: {
+      type: String,
+      trim: true,
+      required: true,
+    },
+    description: {
+      type: String,
+      trim: true,
+    },
+    image: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+    rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 0,
+    },
+    wholeSalePrice: {
+      type: Number,
+      required: true,
+    },
+    retailPrice: {
+      type: Number,
+      required: true,
+    },
+    wholeSaleProfitAmount: {
+      type: Number,
+      max: 100,
+    },
+    retailProfitAmount: {
+      type: Number,
+      max: 100,
+    },
+    stockAlert: {
+      type: Boolean,
+      default: false,
+    },
+    category: {
+      type: Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
+    slug: {
+      type: String,
+      unique: true,
+      trim: true,
+    },
+    stock: {
+      type: Number,
+      default: 0,
+    },
+    tags: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+    brand: {
+      type: Types.ObjectId,
+      ref: "Brand",
+    },
+    sku: {
+      type: String,
+      trim: true,
+    },
+    barCode: {
+      type: String,
+      trim: true,
+    },
+    qrCode: {
+      type: String,
+      trim: true,
+    },
+    warrantyInformation: String,
+    shippingInformation: String,
+    availabilityStatus: {
+      type: Boolean,
+      default: true,
+    },
+    reviews: [
+      {
+        type: Types.ObjectId,
+        ref: "Review",
+      },
+    ],
+    returnPolicy: String,
+    minimumOrderQuantity: {
+      type: Number,
+      min: 5,
+      default: 5,
+    },
+    variant: {
+      type: Types.ObjectId,
+      ref: "Variant",
+    },
+    manufactureCountry: {
+      type: String,
+      trim: true,
+    },
+    size: {
+      type: String,
+      enum: ["S", "M", "L", "XL", "XXL", "XXXL", "Custom", "N/A"],
+    },
+    color: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+    groupUnit: {
+      type: String,
+      enum: ["Box", "Packet", "Dozen", "Custom"],
+    },
+    groupQuantity: {
+      type: Number,
+    },
+    unit: {
+      type: String,
+      enum: ["Piece", "Kg", "Gram", "Packet", "Custom"],
+    },
+    variantType: {
+      type: String,
+      enum: ["SingleVariant", "MultipleVariant"],
+      default: "SingleVariant",
+    },
+    warehouseLocation: [
+      {
+        type: Types.ObjectId,
+        ref: "Warehouse",
+      },
+    ],
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  { timestamps: true }
+);
+
+// Middleware to make slug
+productSchema.pre("save", async function (next) {
+  if (this.isModified("name")) {
+    this.slug = slugify(this.name, {
+      replacement: "-",
+      lower: true,
+      strict: true,
+    });
+  }
+  next();
+});
+
+// Check duplicate slug
+productSchema.pre("save", async function (next) {
+  const existing = await this.constructor.findOne({ slug: this.slug });
+  if (existing && existing._id.toString() !== this._id.toString()) {
+    throw new customError(400, "Product name already exists");
+  }
+  next();
+});
+
+module.exports = mongoose.model("Product", productSchema);

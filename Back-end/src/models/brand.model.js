@@ -9,12 +9,16 @@ const brandSchema = new Schema(
     name: {
       type: String,
       trim: true,
-      required: true,
+      required: [true, "Brand name is required"],
     },
     slug: {
       type: String,
+      trim: true,
+      unique: true,
     },
-    image: {},
+    image: {
+      type: Object,
+    },
     isActive: {
       type: Boolean,
       default: true,
@@ -23,58 +27,54 @@ const brandSchema = new Schema(
   { timestamps: true }
 );
 
-// Middleware: generate slug from name
+// 🔹 Utility: generate slug
+const generateSlug = (name) =>
+  slugify(name, {
+    replacement: "-",
+    lower: true,
+    strict: true,
+  });
+
+// 🔹 Pre-save middleware for slug
 brandSchema.pre("save", async function (next) {
   if (this.isModified("name")) {
-    this.slug = slugify(this.name, {
-      replacement: "-",
-      lower: false,
-      strict: false,
-    });
+    this.slug = generateSlug(this.name);
+
+    // Check duplicate slug
+    const existing = await this.constructor.findOne({ slug: this.slug });
+    if (existing && existing._id.toString() !== this._id.toString()) {
+      throw new customError(400, "Brand name already exists");
+    }
   }
   next();
 });
 
-// Middleware: check duplicate slug
-brandSchema.pre("save", async function (next) {
-  const existingBrand = await this.constructor.findOne({ slug: this.slug });
-
-  if (existingBrand && existingBrand._id.toString() !== this._id.toString()) {
-    throw new customError(400, "Brand name already exists");
-  }
-  next();
-});
-
-
-
-// ✅ Also handle slug in update queries
+// 🔹 Handle slug + duplicate in update
 brandSchema.pre("findOneAndUpdate", async function (next) {
   const update = this.getUpdate();
 
-  if (update.name) {
-    const newSlug = slugify(update.name, {
-      replacement: "-",
-      lower: true,
-      strict: true,
-    });
+  if (update?.name) {
+    const newSlug = generateSlug(update.name);
 
-    // check duplicate slug
-    const existingBrand = await this.model.findOne({ slug: newSlug });
-    if (existingBrand && existingBrand._id.toString() !== this.getQuery()._id?.toString()) {
+    // Check duplicate slug
+    const existing = await this.model.findOne({ slug: newSlug });
+    if (
+      existing &&
+      existing._id.toString() !== this.getQuery()?._id?.toString()
+    ) {
       throw new customError(400, "Brand name already exists");
     }
 
-    update.slug = newSlug; // ✅ assign new slug
+    update.slug = newSlug;
     this.setUpdate(update);
   }
   next();
 });
-// Sorting middleware
-const brandSorting = async function (next) {
+
+// 🔹 Auto-sort by latest created brand
+brandSchema.pre("find", function (next) {
   this.sort({ createdAt: -1 });
   next();
-};
-
-brandSchema.pre("find", brandSorting);
+});
 
 module.exports = mongoose.models.Brand || mongoose.model("Brand", brandSchema);
