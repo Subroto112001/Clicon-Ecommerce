@@ -3,7 +3,35 @@ import Containere from '../../CoomonComponent/Container/Containere';
 import { featureProductImage } from '../../../Helpers/ImageProvider';
 import { Button } from '../../CoomonComponent/CoomonEliment/Button';
 
-const FeaturedProduct: React.FC= () => {
+const FeaturedProduct: React.FC = () => {
+type FeatureHeading = {
+  id: number;
+  name: string;
+};
+
+const featureHeadingsItem: FeatureHeading[] = [
+  {
+    id: 1,
+    name: "All Product",
+  },
+  {
+    id: 2,
+    name: "Smart Phone",
+  },
+  {
+    id: 3,
+    name: "Laptop",
+  },
+  {
+    id: 4,
+    name: "Headphones",
+  },
+  {
+    id: 5,
+    name: "Tablet",
+  },
+];
+
   return (
     <div>
       <Containere>
@@ -25,7 +53,7 @@ const FeaturedProduct: React.FC= () => {
                   ENDS OF CHRISTMAS
                 </button>
               </div>
-              <div className='mt-5!'>
+              <div className="mt-5!">
                 <Button content={"SHOP NOW"} />
               </div>
             </div>
@@ -33,7 +61,19 @@ const FeaturedProduct: React.FC= () => {
               <img src={featureProductImage.Featured} alt="Featured Banner" />
             </div>
           </div>
-          <div className=" bg-gray-700">dsf</div>
+          <div className="grid grid-rows-[10%90%]">
+            <div className="bg-amber-200 flex justify-between items-center">
+                          <h3 className="heading3 text-gray-900">Featured Products</h3>
+                          <div className=' flex flex-row gap-2'>
+                            {featureHeadingsItem.map((item) => (
+                              <span key={item.id} className="body-small-600 text-gray-600">
+                                {item.name}
+                              </span>
+                            ))}
+                          </div>
+            </div>
+            <div className="bg-amber-900">2</div>
+          </div>
         </div>
       </Containere>
     </div>

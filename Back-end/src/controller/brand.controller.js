@@ -51,3 +51,42 @@ exports.getsingleBrand = asyncHandeler(async (req, res) => {
   }
   apiResponse.senSuccess(res, 200, "Single brand details", getsingleBrand);
 });
+// @desc update single brand
+exports.updateBrand = asyncHandeler(async (req, res) => {
+  const { slug } = req.params;
+ 
+  
+  const value = await validateBrand(req);
+
+  
+ 
+  const cloudeImage = await uploadImageColude(value?.image?.path);
+
+  const updatedBrand = await brandmodel.findOneAndUpdate(
+    { slug },
+    { name: value.name, image: cloudeImage },
+    { new: true }
+  );
+  if (!updatedBrand) {
+    throw new customError(404, "Brand not found");
+  }
+  apiResponse.senSuccess(res, 200, "Brand updated successfully", updatedBrand);
+});
+
+
+// @desc delete single brand
+exports.deleteSingleBrand = asyncHandeler(async (req, res) => {
+  const { slug } = req.params;
+
+  const deletedBrand = await brandmodel.findOneAndDelete({ slug });
+  if (!deletedBrand) {
+    throw new customError(404, "Brand not found");
+  }
+
+  // Delete image from Cloudinary if exists
+  if (deletedBrand.image && deletedBrand.image.public_id) {
+    await deleteColudinaryImage(deletedBrand.image.public_id);
+  }
+
+  apiResponse.senSuccess(res, 200, "Brand deleted successfully", deletedBrand);
+});

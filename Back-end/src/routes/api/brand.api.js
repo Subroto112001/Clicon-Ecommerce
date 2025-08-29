@@ -11,4 +11,10 @@ _.route("/createBrand").post(
 
 _.route("/allBrand").get(bandcontroller.getAllbrand);
 _.route("/singleBrand/:slug").get(bandcontroller.getsingleBrand);
+_.route("/updateBrand/:slug").put(
+  upload.fields([{ name: "image", maxCount: 1 }]),
+  bandcontroller.updateBrand
+);
+_.route("/deleteBrand/:slug").delete(bandcontroller.deleteSingleBrand);
+
 module.exports = _;

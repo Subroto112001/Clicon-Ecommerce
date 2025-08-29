@@ -45,6 +45,30 @@ brandSchema.pre("save", async function (next) {
   next();
 });
 
+
+
+// ✅ Also handle slug in update queries
+brandSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate();
+
+  if (update.name) {
+    const newSlug = slugify(update.name, {
+      replacement: "-",
+      lower: true,
+      strict: true,
+    });
+
+    // check duplicate slug
+    const existingBrand = await this.model.findOne({ slug: newSlug });
+    if (existingBrand && existingBrand._id.toString() !== this.getQuery()._id?.toString()) {
+      throw new customError(400, "Brand name already exists");
+    }
+
+    update.slug = newSlug; // ✅ assign new slug
+    this.setUpdate(update);
+  }
+  next();
+});
 // Sorting middleware
 const brandSorting = async function (next) {
   this.sort({ createdAt: -1 });
