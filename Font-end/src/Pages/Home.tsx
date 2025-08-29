@@ -7,6 +7,7 @@ import Categorydropdown from "../Component/HomeCoomponent/CategoryDropdown/Index
 import Banner from "../Component/HomeCoomponent/Banner/Index";
 import Categories from "../Component/HomeCoomponent/Categories/Index";
 import CliconFeatures from "../Component/HomeCoomponent/CliconFeatures/Index";
+import FeaturedProduct from "../Component/HomeCoomponent/FeaturedProduct/Index";
 const Home = () => {
   return (
     <>
@@ -17,6 +18,7 @@ const Home = () => {
       <Banner />
       <CliconFeatures/>
       <Categories />
+      <FeaturedProduct/>
       <Footer />
     </>
   );

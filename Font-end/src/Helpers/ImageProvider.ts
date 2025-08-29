@@ -3,13 +3,41 @@ import Logo from "../assets/HompageAssets/Logo.png"
 import BannerLeft from "../assets/HompageAssets/Banner/BannerLeft.png"
 import BannerRight1 from "../assets/HompageAssets/Banner/BannerRight1.png";
 import BannerRight2 from "../assets/HompageAssets/Banner/BannerRight2.png";
-import Computer from "../assets/ShopbycategoryImgae/Computer.png"
-import Mobile from "../assets/ShopbycategoryImgae/Mobile.png"
-import HeadPhone from "../assets/ShopbycategoryImgae/headphone.png"
-import Keyboard from "../assets/ShopbycategoryImgae/keyboard.png"
-import Camera from "../assets/ShopbycategoryImgae/Camera.png"
-import Televison from "../assets/ShopbycategoryImgae/Television.png"
-export const assets = {
+
+// shop by category image
+import Computer from "../assets/ShopbycategoryImgae/Computer.png";
+import Mobile from "../assets/ShopbycategoryImgae/Mobile.png";
+import HeadPhone from "../assets/ShopbycategoryImgae/headphone.png";
+import Keyboard from "../assets/ShopbycategoryImgae/keyboard.png";
+import Camera from "../assets/ShopbycategoryImgae/Camera.png";
+import Televison from "../assets/ShopbycategoryImgae/Television.png";
+// feature image
+import Featured from "../assets/Feature/FeatureImage.jpg";
+
+// ---------------- Types ----------------
+type AssetType = {
+  Black: string;
+  Logo: string;
+  BannerLeft: string;
+  BannerRight1: string;
+  BannerRight2: string;
+};
+
+type ShopByCategoryImageType = {
+  Computer: string;
+  Mobile: string;
+  HeadPhone: string;
+  Keyboard: string;
+  Camera: string;
+  Televison: string;
+};
+
+type FeatureProductImageType = {
+  Featured: string;
+};
+
+// ---------------- Objects ----------------
+export const assets: AssetType = {
   Black,
   Logo,
   BannerLeft,
@@ -17,11 +45,15 @@ export const assets = {
   BannerRight2,
 };
 
-export const shopbycategoryImageHolder = {
+export const shopbycategoryImageHolder: ShopByCategoryImageType = {
   Computer,
   Mobile,
   HeadPhone,
   Keyboard,
   Camera,
-  Televison
-}
+  Televison,
+};
+
+export const featureProductImage: FeatureProductImageType = {
+  Featured,
+};
