@@ -22,6 +22,7 @@ const subCategorySchema = new Schema(
     discount: {
       type: Types.ObjectId,
       ref: "Discount",
+      default: null,
     },
     isActive: {
       type: Boolean,
