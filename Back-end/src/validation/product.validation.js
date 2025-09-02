@@ -38,21 +38,10 @@ const productValidationSchema = Joi.object({
   brand: Joi.string().optional(),
   sku: Joi.string().optional(),
   barCode: Joi.string().optional(),
-  qrCode: Joi.string().optional(),
-
-  warrantyInformation: Joi.string().optional(),
-  shippingInformation: Joi.string().optional(),
+  qrCode: Joi.string().optional(), 
   availabilityStatus: Joi.boolean().default(true),
-
   reviews: Joi.array().items(Joi.string()).optional(),
-  returnPolicy: Joi.string().optional(),
-
   minimumOrderQuantity: Joi.number().min(5).default(5),
-
-  variant: Joi.string().optional(),
-
-  manufactureCountry: Joi.string().optional(),
-
   size: Joi.string()
     .valid("S", "M", "L", "XL", "XXL", "XXXL", "Custom", "N/A")
     .optional(),
@@ -70,7 +59,7 @@ const productValidationSchema = Joi.object({
     .valid("SingleVariant", "MultipleVariant")
     .default("SingleVariant"),
 
-  warehouseLocation: Joi.array().items(Joi.string()).optional(),
+ 
   isActive: Joi.boolean().default(true),
 }).options({
   abortEarly: true,

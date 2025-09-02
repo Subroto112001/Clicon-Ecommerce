@@ -3,6 +3,36 @@ const mongoose = require("mongoose");
 const { Schema, Types } = mongoose;
 const slugify = require("slugify");
 const { customError } = require("../utils/customError");
+const { required } = require("joi");
+
+const reviewSchema = new Schema(
+  {
+    user: {
+      type: Types.ObjectId,
+      ref: "User", // assuming you have a User model
+      required: true,
+    },
+    rating: {
+      type: Number,
+      min: 1,
+      max: 5,
+      required: true,
+    },
+    date: {
+      type: Date,
+      default : Date.now
+    },
+    reviewer: {
+      type: Types.ObjectId,
+      ref: "User",
+    },
+    comment: {
+      type: String,
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
 
 const productSchema = new Schema(
   {
@@ -89,12 +119,7 @@ const productSchema = new Schema(
       type: Boolean,
       default: true,
     },
-    reviews: [
-      {
-        type: Types.ObjectId,
-        ref: "Review",
-      },
-    ],
+    reviews: [reviewSchema],
     returnPolicy: String,
     minimumOrderQuantity: {
       type: Number,
