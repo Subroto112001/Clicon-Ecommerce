@@ -12,55 +12,14 @@ const productValidationSchema = Joi.object({
   }),
 
   description: Joi.string().allow("").optional(),
-
-  rating: Joi.number().min(0).max(5).optional(),
-
-  wholeSalePrice: Joi.number().required().messages({
-    "any.required": "Wholesale price is required",
-  }),
-
-  retailPrice: Joi.number().required().messages({
-    "any.required": "Retail price is required",
-  }),
-
+  brand: Joi.string().hex().length(24).allow(null),
   wholeSaleProfitAmount: Joi.number().max(100).optional(),
   retailProfitAmount: Joi.number().max(100).optional(),
-
-  stockAlert: Joi.boolean().optional(),
   category: Joi.string().required().messages({
     "any.required": "Category is required",
   }),
-
-  stock: Joi.number().min(0).default(0),
-
   tags: Joi.array().items(Joi.string()).optional(),
-
-  brand: Joi.string().optional(),
-  sku: Joi.string().optional(),
-  barCode: Joi.string().optional(),
-  qrCode: Joi.string().optional(), 
-  availabilityStatus: Joi.boolean().default(true),
   reviews: Joi.array().items(Joi.string()).optional(),
-  minimumOrderQuantity: Joi.number().min(5).default(5),
-  size: Joi.string()
-    .valid("S", "M", "L", "XL", "XXL", "XXXL", "Custom", "N/A")
-    .optional(),
-
-  color: Joi.array().items(Joi.string()).optional(),
-
-  groupUnit: Joi.string().valid("Box", "Packet", "Dozen", "Custom").optional(),
-  groupQuantity: Joi.number().optional(),
-
-  unit: Joi.string()
-    .valid("Piece", "Kg", "Gram", "Packet", "Custom")
-    .optional(),
-
-  variantType: Joi.string()
-    .valid("SingleVariant", "MultipleVariant")
-    .default("SingleVariant"),
-
- 
-  isActive: Joi.boolean().default(true),
 }).options({
   abortEarly: true,
   allowUnknown: true,
@@ -109,7 +68,7 @@ exports.validateProduct = async (req) => {
       }
     }
 
-    return { ...value, images };
+    return { ...value, images: req.files.image };
   } catch (error) {
     if (error.details) {
       console.log("Error from product validation:", error.details[0].message);

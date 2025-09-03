@@ -20,7 +20,7 @@ const reviewSchema = new Schema(
     },
     date: {
       type: Date,
-      default : Date.now
+      default: Date.now,
     },
     reviewer: {
       type: Types.ObjectId,
@@ -47,8 +47,8 @@ const productSchema = new Schema(
     },
     image: [
       {
-        type: String,
-        trim: true,
+        publicIP: String,
+        url: String,
       },
     ],
     rating: {
@@ -80,6 +80,11 @@ const productSchema = new Schema(
     category: {
       type: Types.ObjectId,
       ref: "Category",
+      required: true,
+    },
+    subCategory: {
+      type: Types.ObjectId,
+      ref: "subCategory",
       required: true,
     },
     slug: {
@@ -134,10 +139,12 @@ const productSchema = new Schema(
       type: String,
       trim: true,
     },
-    size: {
-      type: String,
-      enum: ["S", "M", "L", "XL", "XXL", "XXXL", "Custom", "N/A"],
-    },
+    size: [
+      {
+        type: String,
+        default: "N/A",
+      },
+    ],
     color: [
       {
         type: String,

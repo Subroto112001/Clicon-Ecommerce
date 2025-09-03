@@ -1,0 +1,7 @@
+{
+  "workbench.colorCustomizations": {
+    "terminal.foreground": "#fffbfb", // White text
+    "terminal.ansiRed": "#E06C75", // Custom red for ANSI output
+    "terminal.ansiGreen": "#98C379" // Custom green for ANSI output
+  }
+}
