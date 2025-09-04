@@ -474,4 +474,21 @@ a {
 }
 /* swiper pagination */
 
-
+/* hover effect on features */
+.customstYle {
+  position: relative;
+}
+.customstYle::after {
+  content: "";
+  display: block;
+  width: 0%;
+  height: 4px;
+  background-color: var(--color-primary-500);
+  transition: width 0.3s;
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+}
+.customstYle:hover::after {
+  width: 100%;
+}
