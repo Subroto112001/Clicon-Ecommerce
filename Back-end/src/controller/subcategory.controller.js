@@ -54,7 +54,7 @@ exports.getallsubcategory = asyncHandeler(async (req, res) => {
 
 // @desc get single category
 
-exports.getSinglesubcategory = asyncHandeler(async (req, res) => {
+exports.getSinglesubcategory = asyncHandeler(async (req, res) => {``
   const { slug } = req.params;
   const getSignlesubcategory = await subcategoryModel
     .findOne({ slug })

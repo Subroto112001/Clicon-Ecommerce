@@ -59,11 +59,9 @@ const productSchema = new Schema(
     },
     wholeSalePrice: {
       type: Number,
-      required: true,
     },
     retailPrice: {
       type: Number,
-      required: true,
     },
     wholeSaleProfitAmount: {
       type: Number,
