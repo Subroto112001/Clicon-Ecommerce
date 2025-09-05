@@ -59,14 +59,14 @@ const FeaturedProduct: React.FC = () => {
                 <Button content={"SHOP NOW"} />
               </div>
             </div>
-            <div>
-              <img src={featureProductImage.Featured} alt="Featured Banner" />
+            <div className="w-full mt-1">
+              <img src={featureProductImage.Featured} alt="Featured Banner"  className="w-full"/>
             </div>
           </div>
-          <div className="grid grid-rows-[10%90%]">
-            <div className="bg-amber-200 flex justify-between items-center">
+          <div className="flex flex-col">
+            <div className=" flex justify-between items-center py-2">
               <h3 className="heading3 text-gray-900">Featured Products</h3>
-              <div className="flex flex-row items-center gap-4">
+              <div className="flex flex-row items-center gap-x-4">
                 <div className=" flex flex-row gap-2">
                   {featureHeadingsItem.map((item) => (
                     <span
@@ -82,10 +82,10 @@ const FeaturedProduct: React.FC = () => {
                 </span>
               </div>
             </div>
-            <div className="bg-amber-900">
-
-<ProductComponent/>
-
+            <div className="grid grid-cols-4 gap-4 mt-6">
+              {[...new Array(8)].map((_, index) => (
+                <ProductComponent key={index} productKey={index} />
+              ))}
             </div>
           </div>
         </div>
