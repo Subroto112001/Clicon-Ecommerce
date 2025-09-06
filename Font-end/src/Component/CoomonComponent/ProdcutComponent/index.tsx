@@ -1,16 +1,40 @@
 import React from "react";
 import Image from "../../../assets/Product/Image.png";
-import { FaCartArrowDown, FaHeart, FaRegEye, FaStar } from "react-icons/fa";
+import {  FaStar } from "react-icons/fa";
 import { IoEyeOutline } from "react-icons/io5";
 import { CiHeart } from "react-icons/ci";
 import { GiShoppingCart } from "react-icons/gi";
+import ProductCardLoading from "../Skeliton/LoadingSkeliton";
+
+
 interface ProductComponentProps {
   bestDeals?: boolean;
   hotDeals?: boolean;
   productKey: number;
+  status: {
+    isPending: boolean;
+    isError: boolean;
+    error: any;
+  };
+  item: any;
 }
 
-const ProductComponent = ({ bestDeals = false, hotDeals = true, productKey }: ProductComponentProps) => {
+const ProductComponent = ({
+  bestDeals = false,
+  hotDeals = true,
+  productKey,
+  status,
+  item,
+}: ProductComponentProps) => {
+
+
+
+
+  if (status.isPending) {
+    return <ProductCardLoading/>;
+  }
+ 
+  
   return (
     <div
       className="border border-gray-700 rounded bg-white inline-block p-6 relative group"
@@ -19,7 +43,11 @@ const ProductComponent = ({ bestDeals = false, hotDeals = true, productKey }: Pr
       <div className="flex-col gap-y-3 flex justify-center items-center relative">
         <div className="w-[202px] h-[172px]">
           <picture>
-            <img src={Image} alt={Image} className="w-[full] h-[full] " />
+            <img
+              src={item.images[0]}
+              alt={Image}
+              className="w-[full] h-[full] "
+            />
           </picture>
         </div>
         <div className="w-[202px] h-[172px] absolute bg-[rgba(0,0,0)] opacity-0 group-hover:opacity-20 transition-all duration-300 top-0"></div>
@@ -32,16 +60,23 @@ const ProductComponent = ({ bestDeals = false, hotDeals = true, productKey }: Pr
             <FaStar />
           </div>
           <h3 className="max-w-[202px] body-small-600 cursor-pointer hover:text-gray-600">
-            Samsung Galexy S21 5G
+            {item.title}
           </h3>
           <h3 className="max-w-[202px] body-small-400 truncate">
-            Samsung Electronics Samsung Galexy S21 5G
+            {item.description}
           </h3>
           <div className="flex flex-row gap-1.5">
             <span className="text-gray-300 body-small-600 line-through">
-              $2,300
+              {item.price}
             </span>
-            <span className="text-secondary-500 body-small-600">$2,100</span>
+            <span className="text-secondary-500 body-small-600">
+              {item.discount
+                ? `$${(
+                    item.price -
+                    (item.price * item.discountPercentage) / 100
+                  ).toLocaleString()}`
+                : `$${item.price.toLocaleString()}`}
+            </span>
           </div>
         </div>
 
