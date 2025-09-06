@@ -18,6 +18,8 @@ interface Category {
 
 export const GetFeatureProductCategory = async (): Promise<Category[]> => {
   try {
+
+
     const category: Category[] = await fetch(
       "https://dummyjson.com/products/categories"
     ).then((res) => res.json());

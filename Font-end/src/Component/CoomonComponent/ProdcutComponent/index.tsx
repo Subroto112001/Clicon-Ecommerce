@@ -1,10 +1,9 @@
 import React from "react";
-import Image from "../../../assets/Product/Image.png";
-import {  FaStar } from "react-icons/fa";
 import { IoEyeOutline } from "react-icons/io5";
 import { CiHeart } from "react-icons/ci";
 import { GiShoppingCart } from "react-icons/gi";
 import ProductCardLoading from "../Skeliton/LoadingSkeliton";
+import Star from "../Star/Star";
 
 
 interface ProductComponentProps {
@@ -29,6 +28,7 @@ const ProductComponent = ({
 
 
 
+console.log(item);
 
   if (status.isPending) {
     return <ProductCardLoading/>;
@@ -37,7 +37,7 @@ const ProductComponent = ({
   
   return (
     <div
-      className="border border-gray-700 rounded bg-white inline-block p-6 relative group"
+      className="border border-gray-200 rounded bg-white inline-block p-6 relative group"
       key={productKey}
     >
       <div className="flex-col gap-y-3 flex justify-center items-center relative">
@@ -45,21 +45,20 @@ const ProductComponent = ({
           <picture>
             <img
               src={item.images[0]}
-              alt={Image}
+              alt={item.images[0]}
               className="w-[full] h-[full] "
             />
           </picture>
         </div>
         <div className="w-[202px] h-[172px] absolute bg-[rgba(0,0,0)] opacity-0 group-hover:opacity-20 transition-all duration-300 top-0"></div>
         <div className="flex flex-col gap-1">
-          <div className="flex ga-2 items-center text-primary-500">
-            <FaStar />
-            <FaStar />
-            <FaStar />
-            <FaStar />
-            <FaStar />
+          <div className="flex gap-2 items-center">
+            <div className="flex gap-1 items-center text-primary-500">
+              <Star rating={item.rating} />
+            </div>
+            <span className="text-gray-500">{`(${item.rating})`}</span>
           </div>
-          <h3 className="max-w-[202px] body-small-600 cursor-pointer hover:text-gray-600">
+          <h3 className="max-w-[202px] body-small-600 cursor-pointer truncate hover:text-gray-600">
             {item.title}
           </h3>
           <h3 className="max-w-[202px] body-small-400 truncate">
@@ -70,7 +69,7 @@ const ProductComponent = ({
               {item.price}
             </span>
             <span className="text-secondary-500 body-small-600">
-              {item.discount
+              {item.discountPercentage
                 ? `$${(
                     item.price -
                     (item.price * item.discountPercentage) / 100

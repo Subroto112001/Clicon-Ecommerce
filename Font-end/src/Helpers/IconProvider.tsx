@@ -11,6 +11,9 @@ import {
   FaHeart,
   FaPinterest,
   FaReddit,
+  FaRegStar,
+  FaStar,
+  FaStarHalfAlt,
   FaTwitter,
   FaUser,
   FaYoutube,
@@ -57,4 +60,9 @@ export const icons = {
 export const categoriesarrow = {
   prev: <IoMdArrowBack />,
   next: <IoMdArrowForward />,
+};
+export const Staricon = {
+  Blankstar: <FaRegStar />,
+  Fullstar: <FaStar />,
+  Halfstar : <FaStarHalfAlt/>
 };
