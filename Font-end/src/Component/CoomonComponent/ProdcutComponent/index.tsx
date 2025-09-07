@@ -28,7 +28,6 @@ const ProductComponent = ({
 
 
 
-console.log(item);
 
   if (status.isPending) {
     return <ProductCardLoading/>;

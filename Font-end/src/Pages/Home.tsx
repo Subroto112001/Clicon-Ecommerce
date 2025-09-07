@@ -9,6 +9,7 @@ import Categories from "../Component/HomeCoomponent/Categories/Index";
 import CliconFeatures from "../Component/HomeCoomponent/CliconFeatures/Index";
 import FeaturedProduct from "../Component/HomeCoomponent/FeaturedProduct/Index";
 import Introducing from "../Component/HomeCoomponent/Introducing/Index";
+import Offer from "../Component/HomeCoomponent/Offer/Index";
 const Home = () => {
   return (
     <>
@@ -20,7 +21,8 @@ const Home = () => {
       <CliconFeatures/>
       <Categories />
       <FeaturedProduct />
-      <Introducing/>
+      <Introducing />
+      <Offer/>
       <Footer />
     </>
   );
