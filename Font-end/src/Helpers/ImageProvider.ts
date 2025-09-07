@@ -14,6 +14,14 @@ import Televison from "../assets/ShopbycategoryImgae/Television.png";
 // feature image
 import Featured from "../assets/Feature/FeatureImage.jpg";
 
+
+// introducing
+import Leftside from "../assets/Intorducing/LeftSide.png";
+
+import Rightside from "../assets/Intorducing/RightSide.png"
+
+
+
 // ---------------- Types ----------------
 type AssetType = {
   Black: string;
@@ -34,6 +42,10 @@ type ShopByCategoryImageType = {
 
 type FeatureProductImageType = {
   Featured: string;
+};
+type introducingImageType = {
+  Leftside: string;
+  Rightside: string;
 };
 
 // ---------------- Objects ----------------
@@ -56,4 +68,9 @@ export const shopbycategoryImageHolder: ShopByCategoryImageType = {
 
 export const featureProductImage: FeatureProductImageType = {
   Featured,
+};
+// introducing part image
+export const Introducingimage: introducingImageType = {
+  Leftside,
+  Rightside,
 };

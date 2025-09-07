@@ -8,6 +8,7 @@ import Banner from "../Component/HomeCoomponent/Banner/Index";
 import Categories from "../Component/HomeCoomponent/Categories/Index";
 import CliconFeatures from "../Component/HomeCoomponent/CliconFeatures/Index";
 import FeaturedProduct from "../Component/HomeCoomponent/FeaturedProduct/Index";
+import Introducing from "../Component/HomeCoomponent/Introducing/Index";
 const Home = () => {
   return (
     <>
@@ -18,7 +19,8 @@ const Home = () => {
       <Banner />
       <CliconFeatures/>
       <Categories />
-      <FeaturedProduct/>
+      <FeaturedProduct />
+      <Introducing/>
       <Footer />
     </>
   );

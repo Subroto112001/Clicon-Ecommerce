@@ -3,7 +3,7 @@ const ErrorComponent: React.FC<{ onRefresh: () => void; message?: string }> = ({
   onRefresh,
   message = "Something went wrong while loading the data",
 }) => (
-  <div className="flex flex-col  items-center justify-center py-16 px-8">
+  <div className="flex flex-col h-full  items-center justify-center py-16 px-8 border border-gray-100 rounded ">
     <div className="text-center">
       <div className="mb-4">
         <svg
