@@ -20,7 +20,12 @@ import Leftside from "../assets/Intorducing/LeftSide.png";
 
 import Rightside from "../assets/Intorducing/RightSide.png"
 
-
+// sunscribe
+import google from "../assets/HompageAssets/Subscribe/Google.png"
+import Amazon from "../assets/HompageAssets/Subscribe/Amazon.png";
+import philips from "../assets/HompageAssets/Subscribe/philips.png"
+import Sumsung from "../assets/HompageAssets/Subscribe/samsung.png"
+import toshiba from "../assets/HompageAssets/Subscribe/toshiba.png";
 
 // ---------------- Types ----------------
 type AssetType = {
@@ -48,6 +53,19 @@ type introducingImageType = {
   Rightside: string;
 };
 
+
+// subscribe type
+type SubscribeImageType = {
+  google: string;
+  Amazon: string;
+  philips: string;
+  Sumsung: string;
+  toshiba: string;
+};
+
+// subscribe type
+
+
 // ---------------- Objects ----------------
 export const assets: AssetType = {
   Black,
@@ -73,4 +91,14 @@ export const featureProductImage: FeatureProductImageType = {
 export const Introducingimage: introducingImageType = {
   Leftside,
   Rightside,
+};
+
+
+
+export const subscribe: SubscribeImageType = {
+  google,
+  Amazon,
+  philips,
+  Sumsung,
+  toshiba,
 };

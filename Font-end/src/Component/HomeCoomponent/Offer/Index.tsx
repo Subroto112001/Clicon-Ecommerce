@@ -1,13 +1,18 @@
 import React from "react";
 import Containere from "../../CoomonComponent/Container/Containere";
 import OfferItemComponent from "../../CoomonComponent/OfferComponent/OfferItemComponent";
-import { OfferBestSale, OfferFlashSale, OfferTOPRated } from "../../../Helpers/DataProvider";
+import {
+  OfferBestSale,
+  OfferFlashSale,
+  OfferMewArrival,
+  OfferTOPRated,
+} from "../../../Helpers/DataProvider";
 
 const Offer: React.FC = () => {
   return (
     <div>
       <Containere>
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between py-18">
           {/* coloum 1 */}
 
           <div className="flex flex-col gap-4">
@@ -46,7 +51,7 @@ const Offer: React.FC = () => {
           <div className="flex flex-col gap-4">
             <h3 className="text-gray-900 body-medium-600">NEW ARRIVAL</h3>
             <div className=" flex flex-col gap-4">
-              {OfferTOPRated.map((item) => (
+              {OfferMewArrival.map((item) => (
                 <OfferItemComponent key={item.id} item={item} />
               ))}
             </div>

@@ -10,6 +10,7 @@ import CliconFeatures from "../Component/HomeCoomponent/CliconFeatures/Index";
 import FeaturedProduct from "../Component/HomeCoomponent/FeaturedProduct/Index";
 import Introducing from "../Component/HomeCoomponent/Introducing/Index";
 import Offer from "../Component/HomeCoomponent/Offer/Index";
+import Subscribe from "../Component/HomeCoomponent/Subscribe/Index";
 const Home = () => {
   return (
     <>
@@ -22,7 +23,8 @@ const Home = () => {
       <Categories />
       <FeaturedProduct />
       <Introducing />
-      <Offer/>
+      <Offer />
+      <Subscribe/>
       <Footer />
     </>
   );
