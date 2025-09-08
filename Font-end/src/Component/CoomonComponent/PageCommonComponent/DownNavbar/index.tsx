@@ -2,7 +2,7 @@ import Containere from "../../Container/Containere";
 import { assets } from "../../../../Helpers/ImageProvider";
 import Search from "../../CoomonEliment/Search";
 import { icons } from "../../../../Helpers/IconProvider";
-import type React from "react";
+import React from "react";
 import { useState } from "react";
 const DownNavbar = () => {
   const [typeChange, setTypeChange] = useState<Boolean>(false);
@@ -61,4 +61,4 @@ const DownNavbar = () => {
   );
 };
 
-export default DownNavbar;
+export default React.memo(DownNavbar);

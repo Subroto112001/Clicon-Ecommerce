@@ -1,8 +1,14 @@
 import Containere from "../../Container/Containere";
 import { assets } from "../../../../Helpers/ImageProvider";
 import { Button } from "../../CoomonEliment/Button";
+import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
+  const navigate =useNavigate()
+  
+  const handleGotoShop: () => void = () => {
+    navigate("/shop");
+  } 
   return (
     <div className="bg-gray-900 py-3!">
       <Containere>
@@ -20,7 +26,7 @@ export const Header = () => {
             </div>
           </div>
           <div className="flex justify-end">
-            <Button content={"SHOP NOW"} />
+            <Button content={"SHOP NOW"} navigatorfunc={handleGotoShop} />
           </div>
         </div>
       </Containere>

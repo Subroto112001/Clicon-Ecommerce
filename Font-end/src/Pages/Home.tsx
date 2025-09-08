@@ -14,9 +14,7 @@ import Subscribe from "../Component/HomeCoomponent/Subscribe/Index";
 const Home = () => {
   return (
     <>
-      <Header />
-      <TopNavbar />
-      <DownNavbar />
+      
       <Categorydropdown />
       <Banner />
       <CliconFeatures/>
@@ -25,7 +23,7 @@ const Home = () => {
       <Introducing />
       <Offer />
       <Subscribe/>
-      <Footer />
+     
     </>
   );
 };
