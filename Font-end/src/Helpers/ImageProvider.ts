@@ -27,6 +27,9 @@ import philips from "../assets/HompageAssets/Subscribe/philips.png"
 import Sumsung from "../assets/HompageAssets/Subscribe/samsung.png"
 import toshiba from "../assets/HompageAssets/Subscribe/toshiba.png";
 
+import apple from '../assets/Footer/Apple.png' 
+import Playstore from '../assets/Footer/Playstore.png'
+
 // ---------------- Types ----------------
 type AssetType = {
   Black: string;
@@ -101,4 +104,13 @@ export const subscribe: SubscribeImageType = {
   philips,
   Sumsung,
   toshiba,
+};
+
+type footer = {
+  Playstore: string;
+  apple: string;
+}
+export const fotterImage: footer = {
+  Playstore,
+  apple,
 };

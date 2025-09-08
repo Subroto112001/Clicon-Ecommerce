@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import Containere from "../../CoomonComponent/Container/Containere";
 import { Introducingimage } from "../../../Helpers/ImageProvider";
 import { motion } from "motion/react";

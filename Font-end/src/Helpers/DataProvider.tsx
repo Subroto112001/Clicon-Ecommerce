@@ -7,7 +7,7 @@ import Mobile from "../assets/Offer/Mobile.png"
 import Television from '../assets/Offer/Televison.png'
 import Drone from "../assets/Offer/Drone.png";
 import Speaker from "../assets/Offer/Speaker.png";
-import Printer from "../assets/Offer/Printer.png"
+
 import Android from "../assets/Offer/Android.png"
 import Joyestik from "../assets/Offer/Joyestik.png";
 import { subscribe } from "./ImageProvider";
@@ -71,24 +71,24 @@ export const OfferBestSale: OfferFlashSaleType = [
 export const OfferTOPRated: OfferFlashSaleType = [
   {
     id: 1,
-    name: "TOZO T6 True Wireless",
-    desc: "Earbuds Bluetooth Headpho...",
+    name: "Portable Wshing Machine",
+    desc: "11lbs capacity Model 18NMF...",
     price: "$1,500",
     image: Television,
   },
   {
     id: 2,
-    name: "JBL FLIP 4 - Waterproof",
-    desc: " Portable Bluetooth Speaker...",
+    name: "Sony DSCHX8",
+    desc: "High Zoom Point & Shoot Camera",
     price: "$1,500",
     image: Drone,
   },
   {
     id: 3,
-    name: "Wyze Cam Pan v2 1080p",
-    desc: "Pan/Tilt/Zoom Wi-Fi Indoor Smar...",
+    name: "Dell Optiplex 7000x7480",
+    desc: "All-in-One Computer Monitor",
     price: "$1,500",
-    image: Speaker,
+    image: Television,
   },
 ];
 export const OfferMewArrival: OfferFlashSaleType = [
@@ -104,7 +104,7 @@ export const OfferMewArrival: OfferFlashSaleType = [
     name: "JBL FLIP 4 - Waterproof",
     desc: " Portable Bluetooth Speaker...",
     price: "$1,500",
-    image: Printer,
+    image: Speaker,
   },
   {
     id: 3,
@@ -135,5 +135,111 @@ export const subcribeImage = [
   {
     id: 5,
     image: subscribe.Sumsung,
+  },
+];
+
+
+
+type fotterinfo = {
+  id: number,
+  name: string,
+  path: string
+}[]
+
+export const fotterInfo: fotterinfo = [
+  {
+    id: 1,
+    name: "Shop Product",
+    path: "/",
+  },
+  {
+    id: 2,
+    name: "Shoping Cart",
+    path: "/",
+  },
+  {
+    id: 3,
+    name: "Wishlist",
+    path: "/",
+  },
+  {
+    id: 4,
+    name: "Compare",
+    path: "/",
+  },
+  {
+    id: 5,
+    name: "Track Order",
+    path: "/",
+  },
+  {
+    id: 6,
+    name: "Customer Help",
+    path: "/",
+  },
+  {
+    id: 7,
+    name: "About Us",
+    path: "/",
+  },
+];
+
+// fottoer tag info
+type footertagType = {
+  id: number,
+  name : string
+}[]
+export const footertag: footertagType = [
+  {
+    id: 1,
+    name: "Game",
+  },
+  {
+    id: 2,
+    name: "iPhone",
+  },
+  {
+    id: 3,
+    name: "TV",
+  },
+  {
+    id: 4,
+    name: "Asus Laptops",
+  },
+  {
+    id: 5,
+    name: "Macbook",
+  },
+  {
+    id: 6,
+    name: "SSD",
+  },
+  {
+    id: 7,
+    name: "Graphics Card",
+  },
+  {
+    id: 8,
+    name: "Power Bank",
+  },
+  {
+    id: 9,
+    name: "Smart TV",
+  },
+  {
+    id: 10,
+    name: "Speaker",
+  },
+  {
+    id: 11,
+    name: "Tablet",
+  },
+  {
+    id: 12,
+    name: "Microwave",
+  },
+  {
+    id: 13,
+    name: "Samsung",
   },
 ];
