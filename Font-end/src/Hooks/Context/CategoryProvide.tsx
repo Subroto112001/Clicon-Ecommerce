@@ -9,7 +9,6 @@ interface Post {
 
 interface AppContextType {
   posts: Post[];
-  category: string[];
   loading: boolean;
   fetchPosts: () => Promise<void>;
 }
@@ -22,9 +21,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [category, setcategory] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-// product
+
   const fetchPosts = async () => {
     try {
       setLoading(true);
@@ -41,33 +39,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     fetchPosts();
   }, []);
-  
-  
-  // category
-  
- const fetchCategory = async () => {
-   try {
-     setLoading(true);
-     const res = await fetch("https://dummyjson.com/products/category-list");
-     const data = await res.json();
-     setcategory(data);
-   } catch (err) {
-     console.error(err);
-   } finally {
-     setLoading(false);
-   }
- };
-
-
-
-  useEffect(() => {
-    fetchCategory();
-  }, []);
-
-
 
   return (
-    <AppContext.Provider value={{ posts, loading, fetchPosts, category }}>
+    <AppContext.Provider value={{ posts, loading, fetchPosts }}>
       {children}
     </AppContext.Provider>
   );
