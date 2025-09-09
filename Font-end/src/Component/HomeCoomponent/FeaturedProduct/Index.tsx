@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Containere from "../../CoomonComponent/Container/Containere";
 import { featureProductImage } from "../../../Helpers/ImageProvider";
-import { Button } from "../../CoomonComponent/CoomonEliment/Button";
+import { Button, SecondButton } from "../../CoomonComponent/CoomonEliment/Button";
 import { icons } from "../../../Helpers/IconProvider";
 import ProductComponent from "../../CoomonComponent/ProdcutComponent";
 import { useQuery } from "@tanstack/react-query";
@@ -128,7 +128,7 @@ const FeaturedProduct: React.FC = () => {
                   </button>
                 </div>
                 <div className="mt-5">
-                  <Button content={"SHOP NOW"} />
+                  <SecondButton content={"SHOP NOW"} />
                 </div>
               </div>
               <div className="w-full mt-1">
@@ -173,7 +173,7 @@ const FeaturedProduct: React.FC = () => {
                 </button>
               </div>
               <div className="mt-5">
-                <Button content={"SHOP NOW"} />
+                <SecondButton content={"SHOP NOW"} />
               </div>
             </div>
             <div className="w-full mt-1">
@@ -226,20 +226,18 @@ const FeaturedProduct: React.FC = () => {
                 ? [...Array(8)].map((_, index) => (
                     <ProductCardLoading key={index} />
                   ))
-                : products
-                    .slice(0, 8)
-                    .map((item) => (
-                      <ProductComponent
-                        key={item.id}
-                        productKey={item.id}
-                        status={{
-                          isPending: isLoading,
-                          isError: hasError,
-                          error,
-                        }}
-                        item={item}
-                      />
-                    ))}
+                : products.slice(0, 8).map((item) => (
+                    <ProductComponent
+                      key={item.id}
+                      productKey={item.id}
+                      status={{
+                        isPending: isLoading,
+                        isError: hasError,
+                        error,
+                      }}
+                      item={item}
+                    />
+                  ))}
             </div>
           </div>
         </div>
