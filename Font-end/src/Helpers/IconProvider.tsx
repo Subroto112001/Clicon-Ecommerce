@@ -6,7 +6,9 @@ import {
   CiTrophy,
 } from "react-icons/ci";
 import {
+  FaArrowLeft,
   FaArrowRight,
+ 
   FaFacebook,
   FaHeart,
   FaPinterest,
@@ -50,6 +52,7 @@ export const icons = {
   cross: <RxCross2 />,
   locationicon: <MdLocationPin />,
   rightarrow: <FaArrowRight />,
+  leftArrow : <FaArrowLeft />,
   downArrow: <MdKeyboardArrowDown />,
   upArrow: <MdKeyboardArrowUp />,
   delivery: <TfiPackage />,

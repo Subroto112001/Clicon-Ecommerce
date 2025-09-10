@@ -11,7 +11,14 @@ interface AppContextType {
   posts: Post[];
   category: string[];
   loading: boolean;
+  categorybydata: Post[];
   fetchPosts: () => Promise<void>;
+  fetchCategory: () => Promise<void>;
+  fetchProductByCategory: ({
+    categoryname,
+  }: {
+    categoryname: string;
+  }) => Promise<void>;
 }
 
 // 2) Create Context
@@ -24,13 +31,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [posts, setPosts] = useState<Post[]>([]);
   const [category, setcategory] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-// product
+  const [categorybydata, setCategorybydata] = useState<Post[]>([]);
+
+  // product
   const fetchPosts = async () => {
     try {
       setLoading(true);
       const res = await fetch("https://dummyjson.com/products");
       const data = await res.json();
-      setPosts(data.products); 
+      setPosts(data.products);
     } catch (err) {
       console.error(err);
     } finally {
@@ -41,33 +50,61 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     fetchPosts();
   }, []);
-  
+
+
   
   // category
-  
- const fetchCategory = async () => {
-   try {
-     setLoading(true);
-     const res = await fetch("https://dummyjson.com/products/category-list");
-     const data = await res.json();
-     setcategory(data);
-   } catch (err) {
-     console.error(err);
-   } finally {
-     setLoading(false);
-   }
- };
+  const fetchCategory = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("https://dummyjson.com/products/category-list");
+      const data = await res.json();
+      setcategory(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // product by category
+  const fetchProductByCategory = async ({
+    categoryname,
+  }: {
+    categoryname: string;
+  }) => {
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `https://dummyjson.com/products/category/${categoryname}`
+      );
+      const data = await res.json();
+      setCategorybydata(data.products); // Correctly set the 'products' array from the response
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-
+  // Run initial fetches
   useEffect(() => {
+   
     fetchCategory();
   }, []);
 
-
-
   return (
-    <AppContext.Provider value={{ posts, loading, fetchPosts, category }}>
+    <AppContext.Provider
+      value={{
+        posts,
+        loading,
+        fetchPosts,
+        category,
+        fetchCategory,
+        categorybydata,
+        fetchProductByCategory,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );

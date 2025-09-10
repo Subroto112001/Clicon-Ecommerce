@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Containere from "../Component/CoomonComponent/Container/Containere";
 import BreadCrumb from "../Component/CoomonComponent/BreadCrumb/BreadCrumb";
 import { useApp } from "../Hooks/Context/Contextapi";
@@ -6,81 +6,68 @@ import { icons } from "../Helpers/IconProvider";
 import ShopPProductSkeliton from "../Component/CoomonComponent/ShopProductSkeliton/ShopPProductSkeliton";
 import ProductCardLoading from "../Component/CoomonComponent/Skeliton/LoadingSkeliton";
 import RightSideOfShopComponent from "../Component/ShopComponent/Leftside/Index";
-
+ interface Post {
+   id: number;
+   title: string;
+   body: string;
+ }
 const Shop = () => {
-  const { posts, loading, fetchPosts } = useApp();
-  const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 12;
+  const [page, setPage] = useState(1);
+  const [pagePerShow, setPagePerShow] = useState(8);
+  const [dataLength, setDataLength] = useState(0);
 
-  // Calculate pagination values
-  const totalProducts = posts.length;
-  const totalPages = Math.ceil(totalProducts / productsPerPage);
-  const startIndex = (currentPage - 1) * productsPerPage;
-  const endIndex = startIndex + productsPerPage;
+  const { posts, loading, categorybydata } = useApp();
+  const [productdata, setProductdata] = useState<Post[]>([]);
 
-  // Get current page products
-  const currentProducts = useMemo(() => {
-    return posts.slice(startIndex, endIndex);
-  }, [posts, startIndex, endIndex]);
+  console.log(categorybydata);
 
-  // Generate page numbers for pagination
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxVisiblePages = 5;
-
-    if (totalPages <= maxVisiblePages) {
-      // Show all pages if total is less than max visible
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
+  useEffect(() => {
+    if (categorybydata && categorybydata.length > 0) {
+      setProductdata(categorybydata);
     } else {
-      // Show first page
-      pages.push(1);
-
-      if (currentPage > 3) {
-        pages.push("...");
-      }
-
-      // Show pages around current page
-      const start = Math.max(2, currentPage - 1);
-      const end = Math.min(totalPages - 1, currentPage + 1);
-
-      for (let i = start; i <= end; i++) {
-        if (!pages.includes(i)) {
-          pages.push(i);
-        }
-      }
-
-      if (currentPage < totalPages - 2) {
-        pages.push("...");
-      }
-
-      // Show last page
-      if (!pages.includes(totalPages)) {
-        pages.push(totalPages);
-      }
+      setProductdata(posts || []);
     }
+  }, [posts, categorybydata]);
 
-    return pages;
-  };
-
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-      // Scroll to top when page changes
-      window.scrollTo({ top: 0, behavior: "smooth" });
+  /**
+   *@desc: this useEffect will set the data length
+   */
+  useEffect(() => {
+    if (productdata) {
+      setDataLength(productdata.length);
     }
+  }, [productdata]);
+  /**
+   *@desc: total page calculation
+   */
+
+  const totalpage = Math.ceil(dataLength / pagePerShow);
+
+  /**
+   *@desc: it will handle going to previous page
+   */
+
+  const handlePrev = () => {
+    if (page > 1) setPage(page - 1);
   };
 
-  const handlePrevious = () => {
-    handlePageChange(currentPage - 1);
-  };
+  /**
+   *@desc:  it will handle going to next page
+   */
 
   const handleNext = () => {
-    handlePageChange(currentPage + 1);
+    if (page < totalpage) setPage(page + 1);
+  };
+  /**
+   *@desc: this function will set the page number of product
+   */
+
+  const handlePageItem = (index:number) => {
+    setPage(index);
   };
 
-  console.log(posts);
+
+
 
   return (
     <div>
@@ -112,110 +99,81 @@ const Shop = () => {
                   name=""
                   id=""
                   className="border border-gray-200 p-2 outline-none cursor-pointer"
+                  value={pagePerShow}
+                  onChange={(e) => {
+                    setPagePerShow(Number(e.target.value));
+                    setPage(1);
+                  }}
                 >
-                  <option value="" className="cursor-pointer">
-                    Low to High
-                  </option>
-                  <option value="" className="cursor-pointer">
-                    High to Low
-                  </option>
+                  <option value="8">8</option>
+                  <option value="16">16</option>
+                  <option value="32">32</option>
+                  <option value="64">64</option>
                 </select>
               </div>
             </div>
 
-            {/* Products Grid */}
-            <div className="flex flex-wrap gap-2 items-center min-h-[600px]">
+            <div className="flex flex-wrap gap-2 items-center">
               {loading
                 ? // Show loading skeletons when loading
-                  Array.from({ length: productsPerPage }).map((_, index) => (
+                  Array.from({ length: 12 }).map((_, index) => (
                     <ProductCardLoading key={index} />
                   ))
                 : // Show actual products when loaded
-                  currentProducts?.map((item) => (
-                    <ShopPProductSkeliton key={item.id} item={item} />
-                  ))}
-            </div>
+                  productdata
 
-            {/* Pagination */}
-            {!loading && totalProducts > 0 && (
-              <div className="flex flex-col gap-4 mt-8">
-                {/* Results info */}
-                <div className="text-sm text-gray-600">
-                  Showing {startIndex + 1}-{Math.min(endIndex, totalProducts)}{" "}
-                  of {totalProducts} products
-                </div>
-
-                {/* Pagination controls */}
-                <div className="flex items-center justify-center gap-2">
-                  {/* Previous button */}
-                  <button
-                    onClick={handlePrevious}
-                    disabled={currentPage === 1}
-                    className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-                      currentPage === 1
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
-                        : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
-                    }`}
-                  >
-                    Previous
-                  </button>
-
-                  {/* Page numbers */}
-                  <div className="flex items-center gap-1">
-                    {getPageNumbers().map((page, index) => (
-                      <React.Fragment key={index}>
-                        {page === "..." ? (
-                          <span className="px-3 py-2 text-gray-400">...</span>
-                        ) : (
-                          <button
-                            onClick={() => handlePageChange(page as number)}
-                            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-                              currentPage === page
-                                ? "bg-blue-600 text-white border-blue-600"
-                                : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
-                            }`}
-                          >
-                            {page}
-                          </button>
-                        )}
-                      </React.Fragment>
+                    ?.slice(page * 8 - 8, page * pagePerShow)
+                    .map((item) => (
+                      <ShopPProductSkeliton key={item.id} item={item} />
                     ))}
-                  </div>
+            </div>
+            {/* pagination */}
 
-                  {/* Next button */}
-                  <button
-                    onClick={handleNext}
-                    disabled={currentPage === totalPages}
-                    className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-                      currentPage === totalPages
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
-                        : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
+            <div className="flex flex-row justify-center items-center mt-[40px]">
+              <ul className="flex justify-center items-center">
+                <li>
+                  <div
+                    onClick={handlePrev}
+                    className={`flex items-center justify-center px-4 h-10 text-center  text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg cursor-pointer  ${
+                      page === 1
+                        ? "bg-gray-200 text-gray-400"
+                        : "bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                     }`}
                   >
-                    Next
-                  </button>
-                </div>
+                    {icons.leftArrow}
+                  </div>
+                </li>
 
-                {/* Jump to page */}
-                <div className="flex items-center justify-center gap-2 text-sm">
-                  <span className="text-gray-600">Jump to page:</span>
-                  <input
-                    type="number"
-                    min="1"
-                    max={totalPages}
-                    value={currentPage}
-                    onChange={(e) => {
-                      const page = parseInt(e.target.value);
-                      if (page >= 1 && page <= totalPages) {
-                        handlePageChange(page);
-                      }
-                    }}
-                    className="w-16 px-2 py-1 text-center border border-gray-300 rounded-md outline-none focus:border-blue-500"
-                  />
-                  <span className="text-gray-600">of {totalPages}</span>
-                </div>
-              </div>
-            )}
+                {[...new Array(totalpage)].map((_, index) => (
+                  <li key={index}>
+                    <div
+                      className={`flex items-center justify-center px-4 h-10   text-gray-500 bg-white border border-gray-300  cursor-pointer ${
+                        page == index + 1
+                          ? "bg-blue-500 text-gray-500"
+                          : " text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                      }`}
+                      onClick={() => handlePageItem(index + 1)}
+                    >
+                      {index + 1}
+                    </div>
+                  </li>
+                ))}
+
+                <li>
+                  <div
+                    onClick={handleNext}
+                    className={`flex items-center justify-center px-4 h-10  leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg cursor-pointer  ${
+                      page === totalpage
+                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                    }`}
+                  >
+                    {icons.rightarrow}
+                  </div>
+                </li>
+              </ul>
+            </div>
+            {/* pagination */}
           </div>
         </div>
       </Containere>

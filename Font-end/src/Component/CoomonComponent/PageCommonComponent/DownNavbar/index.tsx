@@ -4,6 +4,7 @@ import Search from "../../CoomonEliment/Search";
 import { icons } from "../../../../Helpers/IconProvider";
 import React from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 const DownNavbar = () => {
   const [typeChange, setTypeChange] = useState<Boolean>(false);
 
@@ -13,6 +14,7 @@ const DownNavbar = () => {
     setTypeChange(true);
     console.log(event.target.value);
   };
+  const navigate =useNavigate()
   return (
     <div className="bg-secondary-700 py-4! border-t-2 border-t-[#3F7CA3]">
       <Containere>
@@ -23,6 +25,7 @@ const DownNavbar = () => {
                 src={assets.Logo}
                 alt={assets.Logo}
                 className=" cursor-pointer"
+                onClick={() => navigate("/")}
               />
             </picture>
           </div>
