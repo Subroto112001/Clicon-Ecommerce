@@ -14,6 +14,7 @@ interface AppContextType {
   categorybydata: Post[];
   fetchPosts: () => Promise<void>;
   fetchCategory: () => Promise<void>;
+  selectedCategoryName: string;
   fetchProductByCategory: ({
     categoryname,
   }: {
@@ -32,6 +33,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [category, setcategory] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [categorybydata, setCategorybydata] = useState<Post[]>([]);
+  const [selectedCategoryName, setSelectedCategoryName] =
+    useState<string>("All Products"); // Add this
 
   // product
   const fetchPosts = async () => {
@@ -40,6 +43,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       const res = await fetch("https://dummyjson.com/products");
       const data = await res.json();
       setPosts(data.products);
+        setCategorybydata([]);
+       setSelectedCategoryName("All Products");
     } catch (err) {
       console.error(err);
     } finally {
@@ -51,8 +56,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     fetchPosts();
   }, []);
 
-
-  
   // category
   const fetchCategory = async () => {
     try {
@@ -79,7 +82,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         `https://dummyjson.com/products/category/${categoryname}`
       );
       const data = await res.json();
+
       setCategorybydata(data.products); // Correctly set the 'products' array from the response
+      setSelectedCategoryName(categoryname);
     } catch (err) {
       console.error(err);
     } finally {
@@ -89,9 +94,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Run initial fetches
   useEffect(() => {
-   
     fetchCategory();
   }, []);
+
+
+  
 
   return (
     <AppContext.Provider
@@ -103,6 +110,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         fetchCategory,
         categorybydata,
         fetchProductByCategory,
+        selectedCategoryName,
+        
       }}
     >
       {children}

@@ -16,7 +16,7 @@ const Shop = () => {
   const [pagePerShow, setPagePerShow] = useState(8);
   const [dataLength, setDataLength] = useState(0);
 
-  const { posts, loading, categorybydata } = useApp();
+  const { posts, loading, categorybydata, selectedCategoryName } = useApp();
   const [productdata, setProductdata] = useState<Post[]>([]);
 
   console.log(categorybydata);
@@ -110,6 +110,24 @@ const Shop = () => {
                   <option value="32">32</option>
                   <option value="64">64</option>
                 </select>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center bg-gray-50 rounded py-3 px-6">
+              <div className="flex gap-2 items-center">
+                <h3 className="text-gray-600 body-small-400 ">
+                  Active Filters :
+                </h3>
+                {/* there will be category  name dynamically */}
+                <span className="capitalize clas text-gray-900 body-small-600 ">
+                  {selectedCategoryName}
+                </span>
+              </div>
+              <div>
+                <span>{productdata.length}</span> &nbsp;
+                <span className="text-gray-600 body-small-400 ">
+                  Results found
+                </span>
               </div>
             </div>
 
