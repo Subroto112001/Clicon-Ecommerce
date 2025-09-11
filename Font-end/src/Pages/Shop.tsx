@@ -3,7 +3,7 @@ import Containere from "../Component/CoomonComponent/Container/Containere";
 import BreadCrumb from "../Component/CoomonComponent/BreadCrumb/BreadCrumb";
 import { useApp } from "../Hooks/Context/Contextapi";
 import { icons } from "../Helpers/IconProvider";
-import ShopPProductSkeliton from "../Component/CoomonComponent/ShopProductSkeliton/ShopPProductSkeliton";
+import ShopPProductSkeliton from "../Component/CoomonComponent/ShopCmponent/ShopProductSkeliton/ShopPProductSkeliton";
 import ProductCardLoading from "../Component/CoomonComponent/Skeliton/LoadingSkeliton";
 import RightSideOfShopComponent from "../Component/ShopComponent/Leftside/Index";
  interface Post {

@@ -2,7 +2,7 @@ import React from "react";
 import { CiHeart } from "react-icons/ci";
 import { GiShoppingCart } from "react-icons/gi";
 import { IoEyeOutline } from "react-icons/io5";
-import Star from "../Star/Star";
+import Star from "../../Star/Star";
 
 interface ProductComponentProps {
   bestDeals?: boolean;

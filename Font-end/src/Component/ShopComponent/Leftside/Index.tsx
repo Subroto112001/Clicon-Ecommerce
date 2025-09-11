@@ -1,5 +1,6 @@
 import React from "react";
 import { useApp } from "../../../Hooks/Context/Contextapi";
+import CategoryLoadingSkeleton from "../../CoomonComponent/ShopCmponent/ShopCategoryList/Index";
 const RightSideOfShopComponent = () => {
   const { loading, category, fetchProductByCategory, fetchPosts } = useApp();
 
@@ -12,6 +13,13 @@ const RightSideOfShopComponent = () => {
     }
    
   };
+
+  if (loading) {
+ return <CategoryLoadingSkeleton/>;
+}
+
+
+
   return (
     <div className=" flex flex-col gap-4">
       <h3 className="label2 text-gray-900">CATEGORY</h3>
