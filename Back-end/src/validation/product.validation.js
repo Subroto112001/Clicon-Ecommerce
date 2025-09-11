@@ -30,45 +30,44 @@ const productValidationSchema = Joi.object({
 // ---------------------------
 exports.validateProduct = async (req) => {
   try {
+    // First, validate the text fields from req.body
     const value = await productValidationSchema.validateAsync(req.body);
 
-    const allowedMimeTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/jpg",
-      "image/gif",
-    ];
+    // Create an object to hold all data to be updated
+    let dataToUpdate = { ...value };
 
-    /**
-     * @desc Check if files exist
-     */
-    if (!req.files?.image || req.files?.image?.length === 0) {
-      throw new customError(401, "Product image not found");
-    }
+    // Check if new images were actually uploaded
+    if (req.files && req.files.image && req.files.image.length > 0) {
+      const allowedMimeTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/jpg",
+        "image/gif",
+      ];
 
-    // Multiple images allowed
-    const images = req.files.image;
+      const images = req.files.image;
 
-    for (const imageFile of images) {
-      /**
-       * @desc Check MIME type
-       */
-      if (!allowedMimeTypes.includes(imageFile.mimetype)) {
-        throw new customError(
-          401,
-          "Only JPG, JPEG, PNG and GIF files are allowed"
-        );
+      for (const imageFile of images) {
+        // Check MIME type
+        if (!allowedMimeTypes.includes(imageFile.mimetype)) {
+          throw new customError(
+            401,
+            "Only JPG, JPEG, PNG and GIF files are allowed"
+          );
+        }
+
+        // Check file size (max 5MB)
+        if (imageFile.size >= 5 * 1024 * 1024) {
+          throw new customError(401, "Image size must be below 5MB");
+        }
       }
 
-      /**
-       * @desc Check file size (max 5MB)
-       */
-      if (imageFile.size >= 5 * 1024 * 1024) {
-        throw new customError(401, "Image size must be below 5MB");
-      }
+      // If validation passes, add the new images to our data object
+      dataToUpdate.images = req.files.image;
     }
 
-    return { ...value, images: req.files.image };
+    // Return the combined data (body + optional images)
+    return dataToUpdate;
   } catch (error) {
     if (error.details) {
       console.log("Error from product validation:", error.details[0].message);

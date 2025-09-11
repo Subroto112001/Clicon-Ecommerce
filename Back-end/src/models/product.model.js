@@ -191,6 +191,34 @@ productSchema.pre("save", async function (next) {
   next();
 });
 
+
+
+// Middleware to generate slug on update
+productSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate();
+
+  if (update.$set.name) {
+    const newSlug = slugify(update.$set.name, {
+      lower: true,
+      strict: true,
+    });
+    
+    const docToUpdate = await this.model.findOne(this.getQuery());
+    const existing = await this.model.findOne({ slug: newSlug });
+
+    if (existing && existing._id.toString() !== docToUpdate._id.toString()) {
+      return next(
+        new customError(400, "A product with this name already exists.")
+      );
+    }
+    update.$set.slug = newSlug;
+  }
+  next();
+});
+
+
+
+
 // Check duplicate slug
 productSchema.pre("save", async function (next) {
   const existing = await this.constructor.findOne({ slug: this.slug });

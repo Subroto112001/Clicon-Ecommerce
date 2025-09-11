@@ -1,6 +1,6 @@
 const { asyncHandeler } = require("../utils/asyncHandeler");
 const productModel = require("../models/product.model.js");
-const { uploadImageColude } = require("../helpers/Coludinary");
+const { uploadImageColude, deleteCloudinaryFile } = require("../helpers/Coludinary");
 const { apiResponse } = require("../utils/apiResponse");
 const { customError } = require("../utils/customError");
 const { validateProduct } = require("../validation/product.validation.js");
@@ -73,4 +73,56 @@ exports.getSingleProduct = asyncHandeler(async (req, res) => {
     throw new customError(404, "Product not found");
   }
   apiResponse.senSuccess(res, 200, "Product fetched successfully", product);
+});
+
+
+
+// @desc update single product
+
+exports.updateProduct = asyncHandeler(async (req, res) => {
+  const { slug } = req.params;
+
+  // 1. Find the product FIRST to get the old image public IPs
+  const previouseProduct = await productModel.findOne({ slug });
+  if (!previouseProduct) {
+    throw new customError(404, "Product not found");
+  }
+  const oldImageIds = previouseProduct.image.map((img) => img.publicIP);
+
+  // 2. Get validated data, which may include temporary new image files
+  const updateData = await validateProduct(req);
+
+  // 3. If new images were uploaded, process them
+  if (updateData.images && updateData.images.length > 0) {
+    let uploadedImages = [];
+    for (let image of updateData.images) {
+      const imageAsset = await uploadImageColude(image.path);
+      uploadedImages.push(imageAsset);
+    }
+    // Replace the temporary data with the final Cloudinary data
+    updateData.image = uploadedImages;
+    delete updateData.images;
+  }
+
+  // 4. Update the product in the database.
+  const updatedProduct = await productModel.findOneAndUpdate(
+    { slug },
+    { $set: updateData },
+    { new: true, runValidators: true }
+  );
+
+  // 5. If the update was successful AND new images were uploaded, delete the old ones
+  if (updatedProduct && updateData.image) {
+    for (const publicId of oldImageIds) {
+      // Use your specific delete function here
+      await deleteCloudinaryFile(publicId);
+    }
+  }
+
+  apiResponse.senSuccess(
+    res,
+    200,
+    "Product updated successfully",
+    updatedProduct
+  );
 });

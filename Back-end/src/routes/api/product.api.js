@@ -9,4 +9,8 @@ _.route("/create-product").post(
 );
 _.route("/getall-Product").get(productController.getAllProducts)
 _.route("/getSingle-Product/:slug").get(productController.getSingleProduct);
+_.route("/UpdateSingle-Product/:slug").put(
+  upload.fields([{ name: "image", maxCount: 10 }]),
+  productController.updateProduct
+);
 module.exports = _;
