@@ -1,6 +1,9 @@
 const { asyncHandeler } = require("../utils/asyncHandeler");
 const productModel = require("../models/product.model.js");
-const { uploadImageColude, deleteCloudinaryFile } = require("../helpers/Coludinary");
+const {
+  uploadImageColude,
+  deleteCloudinaryFile,
+} = require("../helpers/Coludinary");
 const { apiResponse } = require("../utils/apiResponse");
 const { customError } = require("../utils/customError");
 const { validateProduct } = require("../validation/product.validation.js");
@@ -75,8 +78,6 @@ exports.getSingleProduct = asyncHandeler(async (req, res) => {
   apiResponse.senSuccess(res, 200, "Product fetched successfully", product);
 });
 
-
-
 // @desc update single product
 
 exports.updateProduct = asyncHandeler(async (req, res) => {
@@ -93,7 +94,7 @@ exports.updateProduct = asyncHandeler(async (req, res) => {
       const imageAsset = await uploadImageColude(image.path);
       uploadedImages.push(imageAsset);
     }
-   
+
     updateData.image = uploadedImages;
     delete updateData.images;
   }
@@ -130,26 +131,24 @@ exports.updateandDeleteImage = asyncHandeler(async (req, res) => {
   if (req.body.imageurl) {
     for (let imgId of req.body.imageurl) {
       await deleteCloudinaryFile(imgId);
-         previouseProduct.image = previouseProduct.image.filter(
-           (img) => img.publicIP !== imgId
+      previouseProduct.image = previouseProduct.image.filter(
+        (img) => img.publicIP !== imgId
       );
     }
   }
   await previouseProduct.save();
 
+  let imageurl = [];
 
-
-  let imageurl = []
-  
   for (let file of req.files.image) {
     const imageAsset = await uploadImageColude(file.path);
-    imageurl.push(imageAsset)
+    imageurl.push(imageAsset);
   }
 
-if(imageurl.length>0){
-  previouseProduct.image.push(...imageurl)
-  await previouseProduct.save()
-} 
+  if (imageurl.length > 0) {
+    previouseProduct.image.push(...imageurl);
+    await previouseProduct.save();
+  }
 
   apiResponse.senSuccess(
     res,
@@ -190,4 +189,48 @@ exports.deleteProduct = asyncHandeler(async (req, res) => {
     "Product and associated images deleted successfully",
     product
   );
+});
+
+// @desc filter product by category
+
+exports.getProductByCategory = asyncHandeler(async (req, res) => {
+  console.log(req.query);
+  const { category, subcategory, brand } = req.query;
+  let filterQuery = {};
+
+  if (category) {
+    filterQuery = { ...filterQuery, category: category };
+  }
+  if (subcategory) {
+    filterQuery = { ...filterQuery, subCategory: subcategory };
+  }
+  if (brand) {
+    filterQuery = { ...filterQuery, brand: brand };
+  } else {
+    filterQuery = {};
+  }
+
+  const product = await productModel.find(filterQuery).sort({ createdAt: -1 });
+  apiResponse.senSuccess(res, 200, "Product fetched successfully", product);
+});
+
+// @desc filter price range
+exports.filterPriceRange = asyncHandeler(async (req, res) => {
+  const { minPrice, maxPrice } = req.query;
+  if (!minPrice || !maxPrice) {
+    throw new customError(400, "Min and max price are required");
+  }
+
+  //---> this function will filter
+  // $get ---> greater then or equal
+  // $lte ---> less than or equal
+
+  const product = await productModel.find({
+    retailPrice: { $gte: Number(minPrice), $lte: Number(maxPrice) },
+  });
+
+  if (!product) {
+    throw new customError(400, "Product not found in your range!!");
+  }
+  apiResponse.senSuccess(res, 200, "Product fetched successfully", product);
 });
