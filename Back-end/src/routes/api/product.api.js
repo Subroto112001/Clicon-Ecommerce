@@ -7,10 +7,16 @@ _.route("/create-product").post(
   upload.fields([{ name: "image", maxCount: 10 }]),
   productController.createProduct
 );
-_.route("/getall-Product").get(productController.getAllProducts)
+_.route("/getall-Product").get(productController.getAllProducts);
 _.route("/getSingle-Product/:slug").get(productController.getSingleProduct);
 _.route("/UpdateSingle-Product/:slug").put(
   upload.fields([{ name: "image", maxCount: 10 }]),
   productController.updateProduct
 );
+
+_.route("/delete-Update-product-image/:slug").put(
+  upload.fields([{ name: "image", maxCount: 10 }]),
+  productController.updateandDeleteImage
+);
+_.route("/delete-Product/:slug").delete(productController.deleteProduct);
 module.exports = _;

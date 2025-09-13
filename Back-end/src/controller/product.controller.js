@@ -81,40 +81,31 @@ exports.getSingleProduct = asyncHandeler(async (req, res) => {
 
 exports.updateProduct = asyncHandeler(async (req, res) => {
   const { slug } = req.params;
-
-  // 1. Find the product FIRST to get the old image public IPs
   const previouseProduct = await productModel.findOne({ slug });
   if (!previouseProduct) {
     throw new customError(404, "Product not found");
   }
   const oldImageIds = previouseProduct.image.map((img) => img.publicIP);
-
-  // 2. Get validated data, which may include temporary new image files
   const updateData = await validateProduct(req);
-
-  // 3. If new images were uploaded, process them
   if (updateData.images && updateData.images.length > 0) {
     let uploadedImages = [];
     for (let image of updateData.images) {
       const imageAsset = await uploadImageColude(image.path);
       uploadedImages.push(imageAsset);
     }
-    // Replace the temporary data with the final Cloudinary data
+   
     updateData.image = uploadedImages;
     delete updateData.images;
   }
 
-  // 4. Update the product in the database.
   const updatedProduct = await productModel.findOneAndUpdate(
     { slug },
     { $set: updateData },
     { new: true, runValidators: true }
   );
 
-  // 5. If the update was successful AND new images were uploaded, delete the old ones
   if (updatedProduct && updateData.image) {
     for (const publicId of oldImageIds) {
-      // Use your specific delete function here
       await deleteCloudinaryFile(publicId);
     }
   }
@@ -124,5 +115,79 @@ exports.updateProduct = asyncHandeler(async (req, res) => {
     200,
     "Product updated successfully",
     updatedProduct
+  );
+});
+
+// @desc image upload and delete
+
+exports.updateandDeleteImage = asyncHandeler(async (req, res) => {
+  const { slug } = req.params;
+  const previouseProduct = await productModel.findOne({ slug });
+  if (!previouseProduct) {
+    throw new customError(404, "Product not found");
+  }
+
+  if (req.body.imageurl) {
+    for (let imgId of req.body.imageurl) {
+      await deleteCloudinaryFile(imgId);
+         previouseProduct.image = previouseProduct.image.filter(
+           (img) => img.publicIP !== imgId
+      );
+    }
+  }
+  await previouseProduct.save();
+
+
+
+  let imageurl = []
+  
+  for (let file of req.files.image) {
+    const imageAsset = await uploadImageColude(file.path);
+    imageurl.push(imageAsset)
+  }
+
+if(imageurl.length>0){
+  previouseProduct.image.push(...imageurl)
+  await previouseProduct.save()
+} 
+
+  apiResponse.senSuccess(
+    res,
+    200,
+    "Product updated successfully",
+    previouseProduct
+  );
+});
+
+// @desc delete product
+
+exports.deleteProduct = asyncHandeler(async (req, res) => {
+  const { slug } = req.params;
+
+  // First find the product to get image details before deletion
+  const product = await productModel.findOne({ slug });
+  if (!product) {
+    throw new customError(404, "Product not found");
+  }
+
+  if (product.image && product.image.length > 0) {
+    for (const img of product.image) {
+      try {
+        await deleteCloudinaryFile(img.publicIP); // or img.public_id depending on your structure
+        console.log(`Deleted image: ${img.publicIP}`);
+      } catch (error) {
+        console.error(`Failed to delete image ${img.publicIP}:`, error);
+        // Continue with other images even if one fails
+      }
+    }
+  }
+
+  await productModel.findOneAndDelete({ slug });
+
+  apiResponse.senSuccess(
+    res,
+    200,
+    "Product and associated images deleted successfully",
+    product
   );
 });
