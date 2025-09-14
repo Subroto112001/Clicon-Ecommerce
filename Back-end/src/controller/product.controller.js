@@ -287,3 +287,24 @@ exports.productPagination = asyncHandeler(async (req, res) => {
     totalPage: Math.ceil((await productModel.countDocuments()) / limit),
   });
 });
+
+
+// @desc search by product name or sku
+exports.searchProduct = asyncHandeler(async (req, res) => {
+  const { name, sku } = req.query;
+  if(!name && !sku){
+    throw new customError(400, "name or sku is required");
+  }
+  const products = await productModel
+    .find({ $or: [{ name: { $regex: name, $options: "i" } }, { sku: { $regex: sku, $options: "i" } }] })
+    .sort({ createdAt: -1 })
+    .populate({
+      path: "category",
+    })
+    .populate({
+      path: "brand",
+    });
+  apiResponse.senSuccess(res, 200, "Product fetched successfully", products);
+})
+
+
