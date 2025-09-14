@@ -195,7 +195,7 @@ exports.deleteProduct = asyncHandeler(async (req, res) => {
 
 exports.getProductByCategory = asyncHandeler(async (req, res) => {
   console.log(req.query);
-  const { category, subcategory, brand } = req.query;
+  const { category, subcategory, brand, minPrice, maxPrice } = req.query;
   let filterQuery = {};
 
   if (category) {
@@ -210,7 +210,12 @@ exports.getProductByCategory = asyncHandeler(async (req, res) => {
     filterQuery = {};
   }
 
-  const product = await productModel.find(filterQuery).sort({ createdAt: -1 });
+  const product = await productModel
+    .find([
+      { ...filterQuery },
+      { retailPrice: { $gte: Number(minPrice), $lte: Number(maxPrice) } },
+    ])
+    .sort({ createdAt: -1 });
   apiResponse.senSuccess(res, 200, "Product fetched successfully", product);
 });
 
@@ -233,4 +238,52 @@ exports.filterPriceRange = asyncHandeler(async (req, res) => {
     throw new customError(400, "Product not found in your range!!");
   }
   apiResponse.senSuccess(res, 200, "Product fetched successfully", product);
+});
+
+// @desc filter by brand
+
+exports.filterbyBrand = asyncHandeler(async (req, res) => {
+  const { brand } = req.query;
+
+  if (!brand) {
+    throw new customError(400, "Brand parameter is required");
+  }
+  const brands = brand.split(",").map((b) => b.trim());
+
+  const products = await productModel
+    .find({ brand: { $in: brands } })
+    .sort({ createdAt: -1 })
+    .populate({
+      path: "category",
+    })
+    .populate({
+      path: "brand",
+    });
+
+  apiResponse.senSuccess(res, 200, "Product fetched successfully", product);
+});
+
+//@desc prodcut pagination
+
+exports.productPagination = asyncHandeler(async (req, res) => {
+  const { limit = 1, page = 1 } = req.query;
+  const skip = (page - 1) * limit;
+
+  const products = await productModel
+    .find()
+    .skip(Number(skip))
+    .limit(Number(limit))
+    .sort({ createdAt: -1 })
+    .populate({
+      path: "category",
+    })
+    .populate({
+      path: "brand",
+    });
+  apiResponse.senSuccess(res, 200, "Product fetched successfully", {
+    products,
+    page: Number(page),
+    limit: Number(limit), 
+    totalPage: Math.ceil((await productModel.countDocuments()) / limit),
+  });
 });

@@ -21,4 +21,6 @@ _.route("/delete-Update-product-image/:slug").put(
 _.route("/delete-Product/:slug").delete(productController.deleteProduct);
 _.route("/filter-product-bycategory").get(productController.getProductByCategory);
 _.route("/filter-product-byPriceRange").get(productController.filterPriceRange);
+_.route("/filter-product-byBrand").get(productController.filterbyBrand);
+_.route("/product-pagination").get(productController.productPagination);
 module.exports = _;
