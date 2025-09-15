@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Containere from "../Component/CoomonComponent/Container/Containere";
 import BreadCrumb from "../Component/CoomonComponent/BreadCrumb/BreadCrumb";
 import { useApp } from "../Hooks/Context/Contextapi";
@@ -19,7 +19,7 @@ const Shop = () => {
   const { posts, loading, categorybydata, selectedCategoryName } = useApp();
   const [productdata, setProductdata] = useState<Post[]>([]);
 
-  console.log(categorybydata);
+ 
 
   useEffect(() => {
     if (categorybydata && categorybydata.length > 0) {

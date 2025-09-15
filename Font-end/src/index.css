@@ -5,7 +5,6 @@
 /* swipper */
 
 * {
-
   box-sizing: border-box;
 }
 img {
@@ -219,7 +218,6 @@ a {
   font-size: 14px;
   font-weight: bold;
   line-height: 48px;
- 
 }
 /* *********** Heading *********** */
 /* *********** Display *********** */
@@ -499,15 +497,6 @@ a {
   width: 100%;
 }
 
-
-
-
-
-
-
-
-
-
 /* custom scrollbar */
 /* width */
 ::-webkit-scrollbar {
@@ -528,3 +517,54 @@ a {
 ::-webkit-scrollbar-thumb:hover {
   background: #adb7bc;
 }
+
+/* range slider */
+/* Yellow Range Slider */
+
+.range-slider {
+  height: 4px;
+  width: 100%;
+  position: relative;
+  cursor: pointer;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.range-slider .range-slider__thumb {
+  height: 16px;
+  width: 16px;
+  background: var(--color-gray-00)!important;
+  border: 2px solid var(--color-primary-500);
+}
+
+#range-slider-yellow {
+  background: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 40 40'  fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")
+    var(--color-gray-100);
+}
+#range-slider-yellow .range-slider__range {
+  background: var(--color-primary-500);
+  transition: height 0.3s;
+}
+
+#range-slider-yellow .range-slider__thumb {
+  background: var(--color-primary-500);
+  transition: transform 0.3s;
+  -webkit-transition: transform 0.3s;
+  -moz-transition: transform 0.3s;
+  -ms-transition: transform 0.3s;
+  -o-transition: transform 0.3s;
+}
+
+#range-slider-yellow .range-slider__thumb[data-active] {
+  transform: translate(-50%, -50%) scale(1.25);
+}
+
+#range-slider-yellow .range-slider__range[data-active] {
+  height: 10px;
+}
+/* range slider */
