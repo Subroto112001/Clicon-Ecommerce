@@ -5,6 +5,7 @@ import { useApp } from "../../../Hooks/Context/Contextapi";
 const RightSideOfShopComponent = () => {
   const {  category, fetchProductByCategory, fetchPosts } = useApp();
   const [value, setValue] = useState<[number, number]>([5, 85]);
+   const [selectedOption, setSelectedOption] = useState<string>("$300 to $500");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === "all") {
       fetchPosts();
@@ -14,6 +15,15 @@ const RightSideOfShopComponent = () => {
     }
   };
 console.log(value);
+const priceOptions = [
+  "All Price",
+  "Under $20",
+  "$25 to $100",
+  "$100 to $300",
+  "$300 to $500",
+  "$500 to $1,000",
+  "$1,000 to $10,000",
+];
 
   return (
     <div className=" flex flex-col gap-4">
@@ -75,6 +85,39 @@ console.log(value);
             <button className="w-[120px] h-[40px] rounded border border-gray-100 cursor-pointer hover:border-gray-200  transition-all duration-300">
               MAX PRICE
             </button>
+          </div>
+          <div className="flex flex-col gap-4 mt-4">
+            {priceOptions.map((option, index) => (
+              <label
+                key={index}
+                className="flex cursor-pointer items-center gap-3"
+              >
+                {/* The actual radio button is visually hidden but accessible */}
+                <input
+                  type="radio"
+                  name="price-option"
+                  value={option}
+                  checked={selectedOption === option}
+                  onChange={() => setSelectedOption(option)}
+                  className="peer sr-only"
+                />
+
+                {/* The custom-styled radio button */}
+                <div
+                  className="
+                h-5 w-5 rounded-full border-2 
+                border-gray-300 
+                transition-all 
+                peer-checked:border-orange-500
+              "
+                ></div>
+
+                {/* The text label */}
+                <span className="text-gray-700 peer-checked:text-gray-900">
+                  {option}
+                </span>
+              </label>
+            ))}
           </div>
         </div>
       </div>
