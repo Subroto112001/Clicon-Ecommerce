@@ -1,30 +1,58 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import RangeSlider from "react-range-slider-input";
 
 import { useApp } from "../../../Hooks/Context/Contextapi";
+import { GetfeaturesProduct } from "../../../Api/featuresProduct";
+import { useQuery } from "@tanstack/react-query";
 const RightSideOfShopComponent = () => {
-  const {  category, fetchProductByCategory, fetchPosts } = useApp();
+ const [products, setProducts] = useState<any[]>([]);
+
+
+  const { category, fetchProductByCategory, fetchPosts } = useApp();
   const [value, setValue] = useState<[number, number]>([5, 85]);
-   const [selectedOption, setSelectedOption] = useState<string>("$300 to $500");
+  const [selectedOption, setSelectedOption] = useState<string>("$300 to $500");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === "all") {
       fetchPosts();
     } else {
       fetchProductByCategory({ categoryname: e.target.value });
-     
     }
   };
-console.log(value);
-const priceOptions = [
-  "All Price",
-  "Under $20",
-  "$25 to $100",
-  "$100 to $300",
-  "$300 to $500",
-  "$500 to $1,000",
-  "$1,000 to $10,000",
-];
+  // Query for all products
+  const {
+    data,
+  } = useQuery({
+    queryKey: ["featured-products"],
+    queryFn: GetfeaturesProduct,
+  });
 
+  useEffect(() => {
+  setProducts(data?.products);
+}, [data])
+  console.log(products);
+  
+  const priceOptions = [
+    "All Price",
+    "Under $20",
+    "$25 to $100",
+    "$100 to $300",
+    "$300 to $500",
+    "$500 to $1,000",
+    "$1,000 to $10,000",
+  ];
+
+  
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+
+  const handleBrandChange = (brandId: string) => {
+    setSelectedBrands((prevSelectedBrands) =>
+      prevSelectedBrands.includes(brandId)
+        ? prevSelectedBrands.filter((id) => id !== brandId)
+        : [...prevSelectedBrands, brandId]
+    );
+  };
+
+  // brand selection
   return (
     <div className=" flex flex-col gap-4">
       <h3 className="label2 text-gray-900">CATEGORY</h3>
@@ -119,10 +147,29 @@ const priceOptions = [
               </label>
             ))}
           </div>
+          <div className=" mt-7 rounded-lg flex flex-col gap-3">
+            <h3 className="label2 text-gray-900">POPULAR BRANDS</h3>
+            <div className="flex flex-col gap-3">
+              {products?.slice(0, 14).map((item) => (
+                <label
+                  key={item.id}
+                  className="flex items-center space-x-2 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedBrands.includes(item.id)}
+                    onChange={() => handleBrandChange(item.id)}
+                    className="form-checkbox text-orange-500 h-5 w-5 rounded-md border-gray-300 focus:ring-orange-500"
+                  />
+                  <span className="text-gray-800">{item.brand}</span>
+                </label>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default RightSideOfShopComponent;
