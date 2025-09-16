@@ -568,3 +568,15 @@ a {
   height: 10px;
 }
 /* range slider */
+
+
+/* checkbox color shop page */
+input[type="checkbox"] {
+  accent-color: orange; /* sets the background */
+}
+
+input[type="checkbox"]:checked {
+  accent-color: orange; /* keep orange background */
+  color: white; /* tick color */
+}
+/* checkbox color shop page */
