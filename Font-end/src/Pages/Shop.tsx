@@ -12,9 +12,9 @@ import RightSideOfShopComponent from "../Component/ShopComponent/Leftside/Index"
    body: string;
  }
 const Shop = () => {
-  const [page, setPage] = useState(1);
-  const [pagePerShow, setPagePerShow] = useState(8);
-  const [dataLength, setDataLength] = useState(0);
+  const [page, setPage] = useState<number>(1);
+  const [pagePerShow, setPagePerShow] = useState<number>(8);
+  const [dataLength, setDataLength] = useState<number>(0);
 
   const { posts, loading, categorybydata, selectedCategoryName } = useApp();
   const [productdata, setProductdata] = useState<Post[]>([]);
@@ -29,7 +29,7 @@ const Shop = () => {
     }
   }, [posts, categorybydata]);
 
-  /**
+  /** 
    *@desc: this useEffect will set the data length
    */
   useEffect(() => {
@@ -49,6 +49,7 @@ const Shop = () => {
 
   const handlePrev = () => {
     if (page > 1) setPage(page - 1);
+    window.scrollTo(0, 0);
   };
 
   /**
@@ -57,6 +58,7 @@ const Shop = () => {
 
   const handleNext = () => {
     if (page < totalpage) setPage(page + 1);
+    window.scrollTo(0, 0);
   };
   /**
    *@desc: this function will set the page number of product
@@ -64,6 +66,7 @@ const Shop = () => {
 
   const handlePageItem = (index:number) => {
     setPage(index);
+    window.scrollTo(0, 0);
   };
 
 
@@ -139,8 +142,7 @@ const Shop = () => {
                   ))
                 : // Show actual products when loaded
                   productdata
-
-                    ?.slice(page * 8 - 8, page * pagePerShow)
+                    ?.slice((page - 1) * pagePerShow, page * pagePerShow)
                     .map((item) => (
                       <ShopPProductSkeliton key={item.id} item={item} />
                     ))}
@@ -165,10 +167,10 @@ const Shop = () => {
                 {[...new Array(totalpage)].map((_, index) => (
                   <li key={index}>
                     <div
-                      className={`flex items-center justify-center px-4 h-10   text-gray-500 bg-white border border-gray-300  cursor-pointer ${
-                        page == index + 1
-                          ? "bg-blue-500 text-gray-500"
-                          : " text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                      className={`flex items-center justify-center px-4 h-10 text-gray-500  border border-gray-300 cursor-pointer ${
+                        page === index + 1
+                          ? "bg-gray-200 text-gray-900 font-bold" // Active page: blue background with white text
+                          : "text-gray-500 hover:bg-gray-100 hover:text-gray-700" // Inactive page: hover effects
                       }`}
                       onClick={() => handlePageItem(index + 1)}
                     >
