@@ -49,24 +49,38 @@ exports.createProduct = asyncHandeler(async (req, res) => {
   console.log("Created SUccessFully");
   apiResponse.senSuccess(res, 201, "Product created successfully", product);
 });
-
 // @desc get all product
 exports.getAllProducts = asyncHandeler(async (req, res) => {
+  const { sort } = req.query;
+  let sortquery = {};
+
+  if (sort === "created-descending") {
+    sortquery = { createdAt: -1 };
+  } else if (sort === "created-ascending") {
+    sortquery = { createdAt: 1 };
+  } else if (sort === "price-ascending") {
+    sortquery = { retailPrice: 1 }; // make sure this field exists
+  } else if (sort === "price-descending") {
+    sortquery = { retailPrice: -1 };
+  }
+   else if (sort === "alfa-ascending") {
+     sortquery = { name: 1 };
+   } else if (sort === "alfa-descending") {
+     sortquery = { name: -1 };
+   }
+
   const products = await productModel
     .find()
-    .sort({ createdAt: -1 })
-    .populate({
-      path: "category",
-    })
+    .sort(sortquery)
+    .populate("category")
+    .populate("brand");
 
-    .populate({
-      path: "brand",
-    });
   if (!products || products.length === 0) {
     throw new customError(404, "No products found");
   }
   apiResponse.senSuccess(res, 200, "Products fetched successfully", products);
 });
+
 
 // @desc get single product
 exports.getSingleProduct = asyncHandeler(async (req, res) => {
@@ -195,7 +209,7 @@ exports.deleteProduct = asyncHandeler(async (req, res) => {
 
 exports.getProductByCategory = asyncHandeler(async (req, res) => {
   console.log(req.query);
-  const { category, subcategory, brand, minPrice, maxPrice } = req.query;
+  const { category, subcategory, brand, minPrice, maxPrice, tag } = req.query;
   let filterQuery = {};
 
   if (category) {
@@ -205,7 +219,20 @@ exports.getProductByCategory = asyncHandeler(async (req, res) => {
     filterQuery = { ...filterQuery, subCategory: subcategory };
   }
   if (brand) {
+    if (Array.isArray(brand)) {
+      filterQuery = { ...filterQuery, brand: { $in:brand } };
+    }
+
     filterQuery = { ...filterQuery, brand: brand };
+  } else {
+    filterQuery = {};
+  }
+  if (tag) {
+    if (Array.isArray(tag)) {
+      filterQuery = { ...filterQuery, tag: { $in:tag } };
+    }
+
+    filterQuery = { ...filterQuery, tag: tag };
   } else {
     filterQuery = {};
   }
@@ -283,20 +310,24 @@ exports.productPagination = asyncHandeler(async (req, res) => {
   apiResponse.senSuccess(res, 200, "Product fetched successfully", {
     products,
     page: Number(page),
-    limit: Number(limit), 
+    limit: Number(limit),
     totalPage: Math.ceil((await productModel.countDocuments()) / limit),
   });
 });
 
-
 // @desc search by product name or sku
 exports.searchProduct = asyncHandeler(async (req, res) => {
   const { name, sku } = req.query;
-  if(!name && !sku){
+  if (!name && !sku) {
     throw new customError(400, "name or sku is required");
   }
   const products = await productModel
-    .find({ $or: [{ name: { $regex: name, $options: "i" } }, { sku: { $regex: sku, $options: "i" } }] })
+    .find({
+      $or: [
+        { name: { $regex: name, $options: "i" } },
+        { sku: { $regex: sku, $options: "i" } },
+      ],
+    })
     .sort({ createdAt: -1 })
     .populate({
       path: "category",
@@ -305,6 +336,4 @@ exports.searchProduct = asyncHandeler(async (req, res) => {
       path: "brand",
     });
   apiResponse.senSuccess(res, 200, "Product fetched successfully", products);
-})
-
-
+});
