@@ -16,5 +16,5 @@ _.route("/upload_image-variant/:slug").post(
 );
 _.route("/delete-variant-image/:slug").delete(variantController.deleteVariantImage)
 
-
+_.route("/update-variant-info/:slug").put(variantController.updateVariantInfo)
 module.exports = _;

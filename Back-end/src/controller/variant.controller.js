@@ -78,32 +78,47 @@ exports.uploadImageInVariant = asyncHandeler(async (req, res) => {
 });
 // @desc delete Variant
 exports.deleteVariantImage = asyncHandeler(async (req, res) => {
-    const { slug } = req.params;
+  const { slug } = req.params;
 
-    if (!slug) {
-        throw new customError(401, "Slug not found");
-    }
+  if (!slug) {
+    throw new customError(401, "Slug not found");
+  }
 
-    const variant = await variantModel.findOne({ slug });
-    const { publicIP } = req.body;
+  const variant = await variantModel.findOne({ slug });
+  const { publicIP } = req.body;
 
-    if (!publicIP) {
-      throw new customError(401, "publicIP not found");
-    }
+  if (!publicIP) {
+    throw new customError(401, "publicIP not found");
+  }
 
-    try {
-        // Use Promise.all with async/await to handle the promises correctly
-        await Promise.all(publicIP.map((id) => deleteCloudinaryFile(id)));
-    } catch (error) {
-        // If an error occurs during deletion from Cloudinary, throw a custom error
-        throw new customError(401, "Variant image delete failed");
-    }
+  try {
+    // Use Promise.all with async/await to handle the promises correctly
+    await Promise.all(publicIP.map((id) => deleteCloudinaryFile(id)));
+  } catch (error) {
+    // If an error occurs during deletion from Cloudinary, throw a custom error
+    throw new customError(401, "Variant image delete failed");
+  }
 
-    // This code will only run if the Cloudinary deletion was successful
-    variant.image = variant.image.filter(
-      (img) => !publicIP.includes(img.publicIP)
-    );
-    await variant.save();
+  // This code will only run if the Cloudinary deletion was successful
+  variant.image = variant.image.filter(
+    (img) => !publicIP.includes(img.publicIP)
+  );
+  await variant.save();
 
-    apiResponse.senSuccess(res, 200, "Image deleted successfully", variant);
+  apiResponse.senSuccess(res, 200, "Image deleted successfully", variant);
+});
+
+// @desc update varaiant information
+exports.updateVariantInfo = asyncHandeler(async (req, res) => {
+  const { slug } = req.params;
+  if (!slug) {
+    throw new customError(401, "Slug Not Found");
+  }
+  const variant = await variantModel.findOne({ slug })
+  if (!variant) {
+    throw new customError(401, 'Variant not found');
+  }
+
+
+
 });
