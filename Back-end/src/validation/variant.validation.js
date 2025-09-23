@@ -62,7 +62,8 @@ exports.validateVariant = async (req) => {
       throw new customError(401, "Image size must be below 5MB");
     }
 
-      return value.image = req.files.image;
+    value.image = req.files.image;
+    return value
   } catch (error) {
     if (error.details) {
       console.log("Error from variant validation", error.details[0].message);

@@ -73,7 +73,7 @@ exports.getAllProducts = asyncHandeler(async (req, res) => {
     .find()
     .sort(sortquery)
     .populate("category")
-    .populate("brand");
+    .populate("brand").populate("variant");
 
   if (!products || products.length === 0) {
     throw new customError(404, "No products found");

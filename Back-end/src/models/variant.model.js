@@ -44,7 +44,7 @@ const variantSchema = new Schema(
     },
     wholeSalePrice: {
       type: Number,
-      required: true,
+      required: true, 
     },
     
     isActive: {
