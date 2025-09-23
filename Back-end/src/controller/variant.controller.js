@@ -2,7 +2,10 @@ const { asyncHandeler } = require("../utils/asyncHandeler");
 const { validateVariant } = require("../validation/variant.validation");
 const { apiResponse } = require("../utils/apiResponse");
 const { customError } = require("../utils/customError");
-const { uploadImageColude } = require("../helpers/Coludinary");
+const {
+  uploadImageColude,
+  deleteCloudinaryFile,
+} = require("../helpers/Coludinary");
 const variantModel = require("../models/variant.model");
 const productModel = require("../models/product.model");
 
@@ -72,4 +75,35 @@ exports.uploadImageInVariant = asyncHandeler(async (req, res) => {
   variant.image = [...variant.image, ...pictureurl];
   await variant.save();
   apiResponse.senSuccess(res, 200, "Image uploaded successfully", variant);
+});
+// @desc delete Variant
+exports.deleteVariantImage = asyncHandeler(async (req, res) => {
+    const { slug } = req.params;
+
+    if (!slug) {
+        throw new customError(401, "Slug not found");
+    }
+
+    const variant = await variantModel.findOne({ slug });
+    const { publicIP } = req.body;
+
+    if (!publicIP) {
+      throw new customError(401, "publicIP not found");
+    }
+
+    try {
+        // Use Promise.all with async/await to handle the promises correctly
+        await Promise.all(publicIP.map((id) => deleteCloudinaryFile(id)));
+    } catch (error) {
+        // If an error occurs during deletion from Cloudinary, throw a custom error
+        throw new customError(401, "Variant image delete failed");
+    }
+
+    // This code will only run if the Cloudinary deletion was successful
+    variant.image = variant.image.filter(
+      (img) => !publicIP.includes(img.publicIP)
+    );
+    await variant.save();
+
+    apiResponse.senSuccess(res, 200, "Image deleted successfully", variant);
 });

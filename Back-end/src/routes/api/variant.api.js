@@ -14,7 +14,7 @@ _.route("/upload_image-variant/:slug").post(
   upload.fields([{ name: "image", maxCount: 10 }]),
   variantController.uploadImageInVariant
 );
-
+_.route("/delete-variant-image/:slug").delete(variantController.deleteVariantImage)
 
 
 module.exports = _;
