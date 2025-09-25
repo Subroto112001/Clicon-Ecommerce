@@ -10,4 +10,5 @@ _.use("/discount", require("./api/discount.api"));
 _.use("/product", require("./api/product.api"));
 _.use("/variant", require("./api/variant.api"));
 _.use("/customer-review", require("./api/customerReview.api"));
+_.use("/cupon", require("./api/cupon.api"));
 module.exports = _;

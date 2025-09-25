@@ -73,12 +73,19 @@ exports.editCustomerReview = asyncHandeler(async (req, res) => {
     throw new customError(404, "Review is not found");
   }
 
-    const singlereview = review.reviews.map((rev) => {
+    const updatedReview = review.reviews.map((rev) => {
       if (rev._id.toString() === reviewId) {
         rev.comment = comment
       }
       return rev;
     });
  
-  apiResponse.senSuccess(res, 200, "Review updated successfully", review);
+    review.reviews = updatedReview;
+    await review.save();
+  apiResponse.senSuccess(
+    res,
+    200,
+    "Review updated successfully",
+    updatedReview
+   );
 });
