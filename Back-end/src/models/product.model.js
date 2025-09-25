@@ -30,6 +30,13 @@ const reviewSchema = new Schema(
       type: String,
       trim: true,
     },
+    product: {
+      type: Types.ObjectId,
+      ref: "Product",
+      required: true,
+    }
+    ,
+    image: [{}]
   },
   { timestamps: true }
 );

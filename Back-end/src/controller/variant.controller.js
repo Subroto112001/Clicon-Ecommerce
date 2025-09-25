@@ -114,11 +114,37 @@ exports.updateVariantInfo = asyncHandeler(async (req, res) => {
   if (!slug) {
     throw new customError(401, "Slug Not Found");
   }
-  const variant = await variantModel.findOne({ slug })
-  if (!variant) {
-    throw new customError(401, 'Variant not found');
+  const preVvariant = await variantModel.findOne({ slug });
+  if (!preVvariant) {
+    throw new customError(401, "Variant not found");
   }
 
+  const ismatched = preVvariant.product.toString() === req.body.product;
 
+  const updatedVariantInfo = await variantModel.findOneAndUpdate(
+    { slug },
+    req.body,
+    { new: true }
+  );
+
+
+  if (ismatched) {
+  await productModel.findOneAndUpdate(
+    { _id: preVvariant.product },
+    { $pull: { variant: preVvariant._id } },
+    { new: true }
+  );
+    // add variant to new product
+    await productModel.findOneAndUpdate(
+      { _id: req.body.product },
+      {$push: {variant: preVvariant._id}},
+      { new: true }
+    )
+  }
+
+if(!updatedVariantInfo){
+  throw new customError(500,"Variant info not updated")
+}
+apiResponse.senSuccess(res, 200, "Variant info updated successfully", updatedVariantInfo);
 
 });
