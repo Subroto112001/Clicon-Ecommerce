@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { customError } = require("../utils/customError");
 const slugify = require("slugify");
+
 const categorySchema = new Schema(
   {
     name: {
