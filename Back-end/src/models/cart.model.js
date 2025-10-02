@@ -8,12 +8,12 @@ const cartItemSchema = new Schema(
   {
     product: {
       type: Types.ObjectId,
-      ref: "Product", // Assuming you have a Product model
-      required: true,
+      ref: "Product",
     },
     variant: {
       type: Types.ObjectId,
-      ref: "Variant", // If you have product variants
+      ref: "Variant",
+      default: null,
     },
     quantity: {
       type: Number,
@@ -24,8 +24,18 @@ const cartItemSchema = new Schema(
       type: Number,
       required: true,
     },
-    subtotal: {
+    totalPrice: {
       type: Number,
+      required: true,
+    },
+    color: {
+      type: String,
+      default: "N/A",
+      required: true,
+    },
+    size: {
+      type: String,
+      default: "N/A",
       required: true,
     },
   },
@@ -55,7 +65,7 @@ const cartSchema = new Schema(
       type: Number,
       default: 0,
     },
-    totalSubtotal: {
+    totalAmountOfWholeProduct: {
       type: Number,
       default: 0,
     },

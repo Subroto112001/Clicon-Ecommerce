@@ -1,5 +1,4 @@
 const express = require("express");
-
 const _ = express.Router();
 
 _.use("/auth", require("./api/user.api"));
@@ -11,4 +10,5 @@ _.use("/product", require("./api/product.api"));
 _.use("/variant", require("./api/variant.api"));
 _.use("/customer-review", require("./api/customerReview.api"));
 _.use("/cupon", require("./api/cupon.api"));
+_.use("/cart", require("./api/cart.api"));
 module.exports = _;
