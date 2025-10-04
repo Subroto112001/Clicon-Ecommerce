@@ -3,44 +3,7 @@ const mongoose = require("mongoose");
 const { Schema, Types } = mongoose;
 const { customError } = require("../utils/customError");
 
-// Cart Item Schema
-const cartItemSchema = new Schema(
-  {
-    product: {
-      type: Types.ObjectId,
-      ref: "Product",
-    },
-    variant: {
-      type: Types.ObjectId,
-      ref: "Variant",
-      default: null,
-    },
-    quantity: {
-      type: Number,
-      required: true,
-      min: [1, "Quantity must be at least 1"],
-    },
-    price: {
-      type: Number,
-      required: true,
-    },
-    totalPrice: {
-      type: Number,
-      required: true,
-    },
-    color: {
-      type: String,
-      default: "N/A",
-      required: true,
-    },
-    size: {
-      type: String,
-      default: "N/A",
-      required: true,
-    },
-  },
-  { _id: false }
-);
+
 
 // Cart Schema
 const cartSchema = new Schema(
@@ -52,7 +15,42 @@ const cartSchema = new Schema(
     guestId: {
       type: String,
     },
-    items: [cartItemSchema],
+    items: [
+      {
+        product: {
+          type: Types.ObjectId,
+          ref: "Product",
+        },
+        variant: {
+          type: Types.ObjectId,
+          ref: "Variant",
+          default: null,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+          min: [1, "Quantity must be at least 1"],
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
+        totalPrice: {
+          type: Number,
+          required: true,
+        },
+        color: {
+          type: String,
+          default: "N/A",
+          required: true,
+        },
+        size: {
+          type: String,
+          default: "N/A",
+          required: true,
+        },
+      },
+    ],
     coupon: {
       type: Types.ObjectId,
       ref: "Coupon",
@@ -61,11 +59,12 @@ const cartSchema = new Schema(
       type: Number,
       default: 0,
     },
+    // this is the discount value field in percentage
     discountPercentage: {
       type: Number,
       default: 0,
     },
-    totalAmountOfWholeProduct: {
+    finalAmount: {
       type: Number,
       default: 0,
     },

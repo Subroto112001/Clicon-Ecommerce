@@ -1,63 +1,64 @@
 const { customError } = require("../utils/customError");
 const Joi = require("joi");
 
-// Joi schema for Cart Validation
+/**
+ * @desc Cart Validation Schema
+ */
 const cartValidationSchema = Joi.object({
-  user: Joi.string().optional(), // ObjectId string
-  guestId: Joi.string().optional(),
+  user: Joi.string().allow(null, "").messages({
+    "string.base": "User ID must be a valid string",
+  }),
 
-  items: Joi.array()
-    .items(
-      Joi.object({
-        product: Joi.string().required().messages({
-          "string.empty": "Product ID is required",
-          "any.required": "Product ID is required",
-        }),
-        variant: Joi.string().optional().allow(null),
-        quantity: Joi.number().integer().min(1).required().messages({
-          "number.base": "Quantity must be a number",
-          "number.min": "Quantity must be at least 1",
-          "any.required": "Quantity is required",
-        }),
-        price: Joi.number().min(0).required().messages({
-          "number.base": "Price must be a number",
-          "any.required": "Price is required",
-        }),
-        totalPrice: Joi.number().min(0).required().messages({
-          "number.base": "Total price must be a number",
-          "any.required": "Total price is required",
-        }),
-        color: Joi.string().required().messages({
-          "string.empty": "Color is required",
-          "any.required": "Color is required",
-        }),
-        size: Joi.string().required().messages({
-          "string.empty": "Size is required",
-          "any.required": "Size is required",
-        }),
-      })
-    )
-    .min(1)
-    .required()
-    .messages({
-      "array.base": "Items must be an array",
-      "array.min": "Cart must contain at least one item",
-      "any.required": "Items are required",
-    }),
+  guestId: Joi.string().allow(null, "").messages({
+    "string.base": "Guest ID must be a valid string",
+  }),
 
-  coupon: Joi.string().optional(),
-  discountPrice: Joi.number().min(0).default(0),
-  discountPercentage: Joi.number().min(0).max(100).default(0),
-  totalAmountOfWholeProduct: Joi.number().min(0).default(0),
+  product: Joi.string().trim().required().messages({
+    "string.empty": "Product ID is required",
+    "any.required": "Product ID is required",
+    "string.trim": "Product ID should not contain extra spaces",
+  }),
+
+  variant: Joi.string().allow(null, "").messages({
+    "string.base": "Variant ID must be a valid string",
+  }),
+
+  quantity: Joi.number().integer().min(1).required().messages({
+    "number.base": "Quantity must be a number",
+    "number.min": "Quantity must be at least 1",
+    "any.required": "Quantity is required",
+  }),
+
+  color: Joi.string().trim().required().messages({
+    "string.empty": "Color is required",
+    "any.required": "Color is required",
+  }),
+
+  size: Joi.string().trim().required().messages({
+    "string.empty": "Size is required",
+    "any.required": "Size is required",
+  }),
+
+  coupon: Joi.string().allow(null, "").messages({
+    "string.base": "Coupon ID must be a valid string",
+  }),
 }).options({
   abortEarly: true,
   allowUnknown: true,
 });
 
-// Validation function
+/**
+ * @desc Validate Cart Data
+ */
 exports.validateCart = async (req) => {
   try {
     const value = await cartValidationSchema.validateAsync(req.body);
+
+    // ✅ Additional logical checks (if needed)
+    if (!value.user && !value.guestId) {
+      throw new customError(401, "Either user or guestId must be provided");
+    }
+
     return value;
   } catch (error) {
     if (error.details) {

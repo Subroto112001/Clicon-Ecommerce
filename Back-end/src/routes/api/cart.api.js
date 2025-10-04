@@ -1,10 +1,10 @@
 const express = require("express");
-const categoryController = require("../../controller/category.controller");
+const cartController = require("../../controller/cart.controller")
 const { upload } = require("../../midleware/multer.midleware");
 const _ = express.Router();
 
 
-
+_.route("/add-to-cart").post(cartController.addToCart);
 
 
 
