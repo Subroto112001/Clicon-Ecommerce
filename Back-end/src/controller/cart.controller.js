@@ -10,7 +10,8 @@ const { validateCart } = require("../validation/cart.validation");
 // @desc Add to cart
 exports.addToCart = asyncHandeler(async (req, res) => {
   const value = await validateCart(req);
-  const { user, guestId, product, variant, quantity, coupon } = value;
+  const { user, guestId, product, variant, quantity, coupon, color, size } =
+    value;
 
   let productObj = null;
   let variantObj = null;
@@ -36,14 +37,46 @@ exports.addToCart = asyncHandeler(async (req, res) => {
       items: [],
       coupon: coupon || null,
     });
-    }
-    
-    // check if product already exists in cart
-    let findIndex = -1;
-    if (productObj) {
-         findIndex = cart.items.findIndex((item)=>item.product.toString()===productObj._id.toString() )
-    }
-    if (variantObj) {
-        findIndex = cart.items.findIndex((item)=>item.variant.toString()===variantObj._id.toString() )
-    }
+  }
+
+  // check if product already exists in cart
+  let findIndex = -1;
+  if (productObj) {
+    findIndex = cart.items.findIndex(
+      (item) => item.product.toString() === productObj._id.toString()
+    );
+  }
+  if (variantObj) {
+    findIndex = cart.items.findIndex(
+      (item) => item.variant.toString() === variantObj._id.toString()
+    );
+  }
+  // update the product information to the cart items
+  if (findIndex > -1) {
+    cart.items[findIndex].quantity += quantity;
+    cart.items[findIndex].price += cart.items[findIndex].price * quantity;
+  } else {
+    cart.items.push({
+      product: product ? product : null,
+      variant: variant ? variant : null,
+      quantity: quantity,
+      price: price,
+      totalPrice: Math.ceil(price * quantity),
+      color: color,
+      size: size,
+    });
+  }
+
+
+
+  // now calculate total amount and quantity
+  const totalCalculatedPrice = cart.items.reduce((accumulator, item) => {
+    let 
+   }, {
+    totalPrice: 0,
+    totalQuantity : 0,
+  })
+
+
+
 });
