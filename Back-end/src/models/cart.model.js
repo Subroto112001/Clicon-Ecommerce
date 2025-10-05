@@ -66,7 +66,11 @@ const cartSchema = new Schema(
     },
     finalAmount: {
       type: Number,
-      default: 0,
+      required: true,
+    },
+    totalQuantity: {
+      type: Number,
+      required: true,
     },
   },
   { timestamps: true }

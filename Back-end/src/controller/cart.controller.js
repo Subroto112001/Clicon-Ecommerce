@@ -6,6 +6,42 @@ const cartModel = require("../models/cart.model");
 const productModel = require("../models/product.model");
 const variantMOdel = require("../models/variant.model");
 const { validateCart } = require("../validation/cart.validation");
+const couponModel = require("../models/cupon.model");
+
+// apply coupon to calculate discount price
+const applyCoupn = async (totalPrice = 0, couponCode = "") => {
+  try {
+    let finalAmount = 0;
+    let discountAmount = 0;
+    const coupon = await couponModel.findOne({ code: couponCode });
+    if (!coupon) {
+      throw new customError(401, "Coupon not found");
+    }
+    if (Date.now() > coupon.expire) {
+      throw new customError(401, "Coupon is expired");
+    }
+    if (coupon.usageLimit < coupon.useCount) {
+      throw new customError(401, "Coupon usage limit exceeded");
+    }
+
+    if (coupon.discountType === "percentage") {
+      discountAmount = (totalPrice * coupon.discountValue) / 100;
+      finalAmount = totalPrice - discountAmount;
+      coupon.useCount += 1;
+    }
+    if (coupon.discountType === "tk") {
+      discountAmount = coupon.discountValue;
+
+      finalAmount = totalPrice - discountAmount;
+      coupon.useCount += 1;
+    }
+    await coupon.save();
+    return { finalAmount, discountAmount };
+  } catch (error) {
+    console.error("Error:", error);
+    throw new customError(401, "Coupon is not valid", error);
+  }
+};
 
 // @desc Add to cart
 exports.addToCart = asyncHandeler(async (req, res) => {
@@ -29,7 +65,7 @@ exports.addToCart = asyncHandeler(async (req, res) => {
   //   if user or guestId Already exist or not in cart model
 
   const cartQuery = user ? { user: user } : { guestId: guestId };
-  const cart = await cartModel.findOne({ cartQuery });
+  let cart = await cartModel.findOne({ cartQuery });
   if (!cart) {
     cart = new cartModel({
       user: user || null,
@@ -67,16 +103,37 @@ exports.addToCart = asyncHandeler(async (req, res) => {
     });
   }
 
-
-
   // now calculate total amount and quantity
-  const totalCalculatedPrice = cart.items.reduce((accumulator, item) => {
-    let 
-   }, {
-    totalPrice: 0,
-    totalQuantity : 0,
-  })
+  const totalCalculatedReducePrice = cart.items.reduce(
+    (accumulator, item) => {
+      accumulator.totalPrice += item.totalPrice;
+      accumulator.totalQuantity += item.quantity;
+      return accumulator;
+    },
+    {
+      totalPrice: 0,
+      totalQuantity: 0,
+    }
+  );
 
+  console.log(totalCalculatedReducePrice);
+  // if user have coupon
+  const { finalAmount, discountAmount } = await applyCoupn(
+    totalCalculatedReducePrice.totalPrice,
+    coupon
+  );
 
+  // @desc now update the cart database
 
+  cart.totalSubtotal = totalCalculatedReducePrice.totalPrice;
+  cart.totalQuantity = totalCalculatedReducePrice.totalQuantity;
+  cart.totalAmount = finalAmount;
+  cart.discountAmount = discountAmount;
+  cart.save();
+  return apiResponse.senSuccess(
+    res,
+    201,
+    "Product added to cart successfully",
+    cart
+  );
 });
