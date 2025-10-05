@@ -12,7 +12,7 @@ const couponModel = require("../models/cupon.model");
 const applyCoupn = async (totalPrice = 0, couponCode = "") => {
   try {
     let finalAmount = 0;
-    let discountAmount = 0;
+    let discountinfo = {};
     const coupon = await couponModel.findOne({ code: couponCode });
     if (!coupon) {
       throw new customError(401, "Coupon not found");
@@ -25,18 +25,24 @@ const applyCoupn = async (totalPrice = 0, couponCode = "") => {
     }
 
     if (coupon.discountType === "percentage") {
-      discountAmount = (totalPrice * coupon.discountValue) / 100;
+     const discountAmount = (totalPrice * coupon.discountValue) / 100;
       finalAmount = totalPrice - discountAmount;
       coupon.useCount += 1;
+      discountinfo.discountType = "percentage";
+      discountinfo.discountValue = discountAmount;
     }
     if (coupon.discountType === "tk") {
-      discountAmount = coupon.discountValue;
+     const discountAmount = coupon.discountValue;
 
       finalAmount = totalPrice - discountAmount;
       coupon.useCount += 1;
+      
+      discountinfo.discountType = "tk";
+      discountinfo.discountValue = discountAmount;
     }
+    discountinfo.couponId = coupon._id;
     await coupon.save();
-    return { finalAmount, discountAmount };
+    return { finalAmount, discountinfo };
   } catch (error) {
     console.error("Error:", error);
     throw new customError(401, "Coupon is not valid", error);
@@ -116,19 +122,21 @@ exports.addToCart = asyncHandeler(async (req, res) => {
     }
   );
 
-  console.log(totalCalculatedReducePrice);
+
   // if user have coupon
-  const { finalAmount, discountAmount } = await applyCoupn(
+  const { finalAmount, discountinfo } = await applyCoupn(
     totalCalculatedReducePrice.totalPrice,
     coupon
   );
+console.log(finalAmount, discountinfo);
 
   // @desc now update the cart database
-
+cart.coupon = discountinfo.couponId
   cart.totalSubtotal = totalCalculatedReducePrice.totalPrice;
   cart.totalQuantity = totalCalculatedReducePrice.totalQuantity;
-  cart.totalAmount = finalAmount;
-  cart.discountAmount = discountAmount;
+  cart.finalAmount = finalAmount;
+  cart.discountType = discountinfo.discountType;
+  cart.discountPrice = discountinfo.discountValue;
   cart.save();
   return apiResponse.senSuccess(
     res,

@@ -59,11 +59,12 @@ const cartSchema = new Schema(
       type: Number,
       default: 0,
     },
-    // this is the discount value field in percentage
-    discountPercentage: {
-      type: Number,
-      default: 0,
+    discountType: {
+      type: String,
+      enum: ["percentage", "tk"],
+      required: true,
     },
+   
     finalAmount: {
       type: Number,
       required: true,
