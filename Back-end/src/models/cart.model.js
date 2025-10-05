@@ -64,6 +64,14 @@ const cartSchema = new Schema(
       enum: ["percentage", "tk"],
       required: true,
     },
+    discountAmount: {
+      type: Number,
+      default: 0,
+    },
+    totalSubtotal: {
+      type: Number,
+      required: true,
+    },
    
     finalAmount: {
       type: Number,

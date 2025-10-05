@@ -41,6 +41,8 @@ const applyCoupn = async (totalPrice = 0, couponCode = "") => {
       discountinfo.discountValue = discountAmount;
     }
     discountinfo.couponId = coupon._id;
+    discountinfo.discountAmount = coupon.discountValue;
+    
     await coupon.save();
     return { finalAmount, discountinfo };
   } catch (error) {
@@ -137,6 +139,8 @@ cart.coupon = discountinfo.couponId
   cart.finalAmount = finalAmount;
   cart.discountType = discountinfo.discountType;
   cart.discountPrice = discountinfo.discountValue;
+  
+ cart.discountAmount = discountinfo.discountAmount;
   cart.save();
   return apiResponse.senSuccess(
     res,
