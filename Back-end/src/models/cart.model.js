@@ -62,7 +62,7 @@ const cartSchema = new Schema(
     discountType: {
       type: String,
       enum: ["percentage", "tk"],
-      required: true,
+     
     },
     discountAmount: {
       type: Number,

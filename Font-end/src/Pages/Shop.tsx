@@ -6,11 +6,15 @@ import { icons } from "../Helpers/IconProvider";
 import ShopPProductSkeliton from "../Component/CoomonComponent/ShopCmponent/ShopProductSkeliton/ShopPProductSkeliton";
 import ProductCardLoading from "../Component/CoomonComponent/Skeliton/LoadingSkeliton";
 import RightSideOfShopComponent from "../Component/ShopComponent/Leftside/Index";
- interface Post {
-   id: number;
-   title: string;
-   body: string;
- }
+import { ErrorBoundary } from "react-error-boundary";
+import ErrorFallBack from "../Component/CoomonComponent/ErrorBoundary/ErrorFallBack";
+
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+}
+
 const Shop = () => {
   const [page, setPage] = useState<number>(1);
   const [pagePerShow, setPagePerShow] = useState<number>(8);
@@ -18,8 +22,6 @@ const Shop = () => {
 
   const { posts, loading, categorybydata, selectedCategoryName } = useApp();
   const [productdata, setProductdata] = useState<Post[]>([]);
-
- 
 
   useEffect(() => {
     if (categorybydata && categorybydata.length > 0) {
@@ -29,7 +31,7 @@ const Shop = () => {
     }
   }, [posts, categorybydata]);
 
-  /** 
+  /**
    *@desc: this useEffect will set the data length
    */
   useEffect(() => {
@@ -37,16 +39,15 @@ const Shop = () => {
       setDataLength(productdata.length);
     }
   }, [productdata]);
+
   /**
    *@desc: total page calculation
    */
-
   const totalpage = Math.ceil(dataLength / pagePerShow);
 
   /**
    *@desc: it will handle going to previous page
    */
-
   const handlePrev = () => {
     if (page > 1) setPage(page - 1);
     window.scrollTo(0, 0);
@@ -55,22 +56,18 @@ const Shop = () => {
   /**
    *@desc:  it will handle going to next page
    */
-
   const handleNext = () => {
     if (page < totalpage) setPage(page + 1);
     window.scrollTo(0, 0);
   };
+
   /**
    *@desc: this function will set the page number of product
    */
-
-  const handlePageItem = (index:number) => {
+  const handlePageItem = (index: number) => {
     setPage(index);
     window.scrollTo(0, 0);
   };
-
-
-
 
   return (
     <div>
@@ -81,9 +78,24 @@ const Shop = () => {
       </div>
       <Containere>
         <div className="grid grid-cols-[1fr_4fr] gap-6 py-10">
+          {/* Wrap RightSideOfShopComponent with ErrorBoundary */}
           <div className="">
-            <RightSideOfShopComponent />
+            <ErrorBoundary
+              FallbackComponent={ErrorFallBack}
+              onReset={() => {
+                // Reload the page to reset the error state
+                window.location.reload();
+              }}
+              onError={(error, errorInfo) => {
+                // Log error to console or send to error tracking service
+                console.error("Shop Filter Error:", error);
+                console.error("Error Info:", errorInfo);
+              }}
+            >
+              <RightSideOfShopComponent />
+            </ErrorBoundary>
           </div>
+
           <div className="flex flex-col gap-2 h-full">
             <div className="flex flex-row items-center justify-between">
               <div className="relative">

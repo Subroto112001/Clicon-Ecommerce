@@ -6,6 +6,12 @@ import { GetfeaturesProduct } from "../../../Api/featuresProduct";
 import { useQuery } from "@tanstack/react-query";
 const RightSideOfShopComponent = () => {
   const [products, setProducts] = useState<any[]>([]);
+
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const { category, fetchProductByCategory, fetchPosts } = useApp();
+  const [value, setValue] = useState<[number, number]>([5, 85]);
+
+  const [selectedOption, setSelectedOption] = useState<string>("$300 to $500");
   const [randomTagsColor, setRandomTagsColor] = useState<string[]>([
     "primary-400",
     "primary-500",
@@ -21,9 +27,6 @@ const RightSideOfShopComponent = () => {
     "warning-500",
   ]);
 
-  const { category, fetchProductByCategory, fetchPosts } = useApp();
-  const [value, setValue] = useState<[number, number]>([5, 85]);
-  const [selectedOption, setSelectedOption] = useState<string>("$300 to $500");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === "all") {
       fetchPosts();
@@ -31,6 +34,13 @@ const RightSideOfShopComponent = () => {
       fetchProductByCategory({ categoryname: e.target.value });
     }
   };
+
+  const throwTestError = () => {
+    throw new Error(
+      "Test Error: This is a simulated error to test ErrorBoundary!"
+    );
+  };
+
   // Query for all products
   const { data } = useQuery({
     queryKey: ["featured-products"],
@@ -40,7 +50,6 @@ const RightSideOfShopComponent = () => {
   useEffect(() => {
     setProducts(data?.products);
   }, [data]);
-  console.log(products);
 
   const priceOptions = [
     "All Price",
@@ -51,8 +60,6 @@ const RightSideOfShopComponent = () => {
     "$500 to $1,000",
     "$1,000 to $10,000",
   ];
-
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
 
   const handleBrandChange = (brandId: string) => {
     setSelectedBrands((prevSelectedBrands) =>

@@ -5,6 +5,8 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Parent from "./Parent/Index";
 import Shop from "./Pages/Shop";
 import { AppProvider } from "./Hooks/Context/Contextapi";
+import { ErrorBoundary } from "react-error-boundary";
+import ErrorFallBack from "./Component/CoomonComponent/ErrorBoundary/ErrorFallBack";
 
 const queryClient = new QueryClient();
 
@@ -16,9 +18,23 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route element={<Parent />}>
-              <Route index element={<Home />} />
+              <Route
+                index
+                element={
+                  <ErrorBoundary FallbackComponent={ErrorFallBack}>
+                    <Home />
+                  </ErrorBoundary>
+                }
+              />
 
-              <Route path="/shop" element={<Shop />} />
+              <Route
+                path="/shop"
+                element={
+                  <ErrorBoundary FallbackComponent={ErrorFallBack}>
+                    <Shop />
+                  </ErrorBoundary>
+                }
+              />
             </Route>
           </Routes>
         </BrowserRouter>

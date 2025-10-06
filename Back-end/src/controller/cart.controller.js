@@ -10,6 +10,10 @@ const couponModel = require("../models/cupon.model");
 
 // apply coupon to calculate discount price
 const applyCoupn = async (totalPrice = 0, couponCode = "") => {
+  if (couponCode == null) {
+    return { finalAmount: totalPrice, discountinfo: {} };
+  }
+
   try {
     let finalAmount = 0;
     let discountinfo = {};
@@ -25,24 +29,24 @@ const applyCoupn = async (totalPrice = 0, couponCode = "") => {
     }
 
     if (coupon.discountType === "percentage") {
-     const discountAmount = (totalPrice * coupon.discountValue) / 100;
+      const discountAmount = (totalPrice * coupon.discountValue) / 100;
       finalAmount = totalPrice - discountAmount;
       coupon.useCount += 1;
       discountinfo.discountType = "percentage";
       discountinfo.discountValue = discountAmount;
     }
     if (coupon.discountType === "tk") {
-     const discountAmount = coupon.discountValue;
+      const discountAmount = coupon.discountValue;
 
       finalAmount = totalPrice - discountAmount;
       coupon.useCount += 1;
-      
+
       discountinfo.discountType = "tk";
       discountinfo.discountValue = discountAmount;
     }
     discountinfo.couponId = coupon._id;
     discountinfo.discountAmount = coupon.discountValue;
-    
+
     await coupon.save();
     return { finalAmount, discountinfo };
   } catch (error) {
@@ -70,10 +74,11 @@ exports.addToCart = asyncHandeler(async (req, res) => {
     variantObj = await variantMOdel.findById(variant);
     price = variantObj.retailPrice;
   }
-  //   if user or guestId Already exist or not in cart model
 
+  // FIX 1: Remove the extra object wrapper
   const cartQuery = user ? { user: user } : { guestId: guestId };
-  let cart = await cartModel.findOne({ cartQuery });
+  let cart = await cartModel.findOne(cartQuery);
+
   if (!cart) {
     cart = new cartModel({
       user: user || null,
@@ -83,23 +88,30 @@ exports.addToCart = asyncHandeler(async (req, res) => {
     });
   }
 
-  // check if product already exists in cart
+  // FIX 2: Compare ObjectIds correctly using .toString() or .equals()
   let findIndex = -1;
   if (productObj) {
     findIndex = cart.items.findIndex(
-      (item) => item.product.toString() === productObj._id.toString()
+      (item) =>
+        item.product && item.product.toString() === productObj._id.toString()
     );
   }
   if (variantObj) {
     findIndex = cart.items.findIndex(
-      (item) => item.variant.toString() === variantObj._id.toString()
+      (item) =>
+        item.variant && item.variant.toString() === variantObj._id.toString()
     );
   }
-  // update the product information to the cart items
+
+  // FIX 3: Correct the price calculation logic
   if (findIndex > -1) {
+    // Update existing item
     cart.items[findIndex].quantity += quantity;
-    cart.items[findIndex].price += cart.items[findIndex].price * quantity;
+    cart.items[findIndex].totalPrice = Math.ceil(
+      price * cart.items[findIndex].quantity
+    );
   } else {
+    // Add new item
     cart.items.push({
       product: product ? product : null,
       variant: variant ? variant : null,
@@ -124,28 +136,242 @@ exports.addToCart = asyncHandeler(async (req, res) => {
     }
   );
 
-
   // if user have coupon
   const { finalAmount, discountinfo } = await applyCoupn(
     totalCalculatedReducePrice.totalPrice,
     coupon
   );
-console.log(finalAmount, discountinfo);
 
   // @desc now update the cart database
-cart.coupon = discountinfo.couponId
+  cart.coupon = discountinfo.couponId;
   cart.totalSubtotal = totalCalculatedReducePrice.totalPrice;
   cart.totalQuantity = totalCalculatedReducePrice.totalQuantity;
   cart.finalAmount = finalAmount;
-  cart.discountType = discountinfo.discountType;
-  cart.discountPrice = discountinfo.discountValue;
-  
- cart.discountAmount = discountinfo.discountAmount;
-  cart.save();
+  cart.discountType = discountinfo.discountType || null;
+  cart.discountPrice = discountinfo.discountValue || null;
+  cart.discountAmount = discountinfo.discountAmount;
+
+  await cart.save();
+
   return apiResponse.senSuccess(
     res,
     201,
     "Product added to cart successfully",
+    cart
+  );
+});
+
+// @desc decrease the cart quantity
+exports.decreaseQuantity = asyncHandeler(async (req, res) => {
+   const userid = req.userid || req.body.userid;
+   const { guestId, cartItemId } = req.body;
+  
+  if (!cartItemId) {
+    throw new customError(400, "Cart item id is missing!");
+  }
+
+  // Build query - ensure we have either userid or guestId
+  if (!userid && !guestId) {
+    throw new customError(400, "User ID or Guest ID is required");
+  }
+
+  const query = userid ? { user: userid } : { guestId: guestId };
+
+
+  // Add logging to debug
+  console.log("Query:", query);
+  console.log("CartItemId:", cartItemId);
+  
+  const cart = await cartModel.findOne(query);
+
+  if (!cart) {
+    throw new customError(404, "Cart not found for this user");
+  }
+
+  
+
+  // Find the cart item index using proper ObjectId comparison
+  const index = cart.items.findIndex(
+    (item) => item._id.toString() === cartItemId.toString()
+  );
+
+  if (index === -1) {
+    throw new customError(404, "Cart item not found in cart");
+  }
+
+  const cartItem = cart.items[index];
+
+  // Decrease quantity or remove item if quantity becomes 0
+  if (cartItem.quantity > 1) {
+    cartItem.quantity -= 1;
+    cartItem.totalPrice = Math.ceil(cartItem.price * cartItem.quantity);
+  } else {
+    // Remove item if quantity would be 0
+    cart.items.splice(index, 1);
+  }
+
+  // Recalculate total price and quantity
+  const totalCalculated = cart.items.reduce(
+    (acc, item) => {
+      acc.totalPrice += item.totalPrice;
+      acc.totalQuantity += item.quantity;
+      return acc;
+    },
+    {
+      totalPrice: 0,
+      totalQuantity: 0,
+    }
+  );
+
+  // Update cart without reapplying coupon (to avoid incrementing useCount)
+  cart.totalSubtotal = totalCalculated.totalPrice;
+  cart.totalQuantity = totalCalculated.totalQuantity;
+  
+  // Recalculate discount if coupon exists
+  if (cart.coupon && totalCalculated.totalPrice > 0) {
+    // Get coupon details without incrementing useCount
+    const coupon = await couponModel.findById(cart.coupon);
+    
+    if (coupon && Date.now() <= coupon.expire) {
+      let discountAmount = 0;
+      
+      if (coupon.discountType === "percentage") {
+        discountAmount = (totalCalculated.totalPrice * coupon.discountValue) / 100;
+      } else if (coupon.discountType === "tk") {
+        discountAmount = coupon.discountValue;
+      }
+      
+      cart.finalAmount = totalCalculated.totalPrice - discountAmount;
+      cart.discountType = coupon.discountType;
+      cart.discountPrice = discountAmount;
+      cart.discountAmount = coupon.discountValue;
+    } else {
+      // Coupon expired or not found, remove it
+      cart.finalAmount = totalCalculated.totalPrice;
+      cart.coupon = null;
+      cart.discountType = null;
+      cart.discountPrice = null;
+      cart.discountAmount = null;
+    }
+  } else {
+    // No coupon or empty cart
+    cart.finalAmount = totalCalculated.totalPrice;
+  }
+
+  await cart.save();
+
+  return apiResponse.senSuccess(
+    res,
+    200,
+    cart.items.length === 0 || cartItem.quantity === 0
+      ? "Item removed from cart successfully" 
+      : "Cart item quantity decreased successfully",
+    cart
+  );
+});
+
+// @desc increase quantity
+exports.increaseQuantity = asyncHandeler(async (req, res) => {
+   const userid = req.userid || req.body.userid;
+   const { guestId, cartItemId } = req.body;
+  
+  if (!cartItemId) {
+    throw new customError(400, "Cart item id is missing!");
+  }
+
+  // Build query - ensure we have either userid or guestId
+  if (!userid && !guestId) {
+    throw new customError(400, "User ID or Guest ID is required");
+  }
+
+  const query = userid ? { user: userid } : { guestId: guestId };
+
+
+  // Add logging to debug
+  console.log("Query:", query);
+  console.log("CartItemId:", cartItemId);
+  
+  const cart = await cartModel.findOne(query);
+
+  if (!cart) {
+    throw new customError(404, "Cart not found for this user");
+  }
+
+  
+
+  // Find the cart item index using proper ObjectId comparison
+  const index = cart.items.findIndex(
+    (item) => item._id.toString() === cartItemId.toString()
+  );
+
+  if (index === -1) {
+    throw new customError(404, "Cart item not found in cart");
+  }
+
+  const cartItem = cart.items[index];
+
+  // Decrease quantity or remove item if quantity becomes 0
+  if (cartItem.quantity > 1) {
+    cartItem.quantity += 1;
+    cartItem.totalPrice = Math.ceil(cartItem.price * cartItem.quantity);
+  } else {
+    // Remove item if quantity would be 0
+    cart.items.splice(index, 1);
+  }
+
+  // Recalculate total price and quantity
+  const totalCalculated = cart.items.reduce(
+    (acc, item) => {
+      acc.totalPrice += item.totalPrice;
+      acc.totalQuantity += item.quantity;
+      return acc;
+    },
+    {
+      totalPrice: 0,
+      totalQuantity: 0,
+    }
+  );
+
+  // Update cart without reapplying coupon (to avoid incrementing useCount)
+  cart.totalSubtotal = totalCalculated.totalPrice;
+  cart.totalQuantity = totalCalculated.totalQuantity;
+  
+  // Recalculate discount if coupon exists
+  if (cart.coupon && totalCalculated.totalPrice > 0) {
+    // Get coupon details without incrementing useCount
+    const coupon = await couponModel.findById(cart.coupon);
+    
+    if (coupon && Date.now() <= coupon.expire) {
+      let discountAmount = 0;
+      
+      if (coupon.discountType === "percentage") {
+        discountAmount = (totalCalculated.totalPrice * coupon.discountValue) / 100;
+      } else if (coupon.discountType === "tk") {
+        discountAmount = coupon.discountValue;
+      }
+      
+      cart.finalAmount = totalCalculated.totalPrice - discountAmount;
+      cart.discountType = coupon.discountType;
+      cart.discountPrice = discountAmount;
+      cart.discountAmount = coupon.discountValue;
+    } else {
+      // Coupon expired or not found, remove it
+      cart.finalAmount = totalCalculated.totalPrice;
+      cart.coupon = null;
+      cart.discountType = null;
+      cart.discountPrice = null;
+      cart.discountAmount = null;
+    }
+  } else {
+    // No coupon or empty cart
+    cart.finalAmount = totalCalculated.totalPrice;
+  }
+
+  await cart.save();
+
+  return apiResponse.senSuccess(
+    res,
+    200,"Cart Increase Successfully",
     cart
   );
 });

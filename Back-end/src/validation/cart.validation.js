@@ -13,7 +13,7 @@ const cartValidationSchema = Joi.object({
     "string.base": "Guest ID must be a valid string",
   }),
 
-  product: Joi.string().trim().required().messages({
+  product: Joi.string().trim().optional().allow(null, "").messages({
     "string.empty": "Product ID is required",
     "any.required": "Product ID is required",
     "string.trim": "Product ID should not contain extra spaces",
