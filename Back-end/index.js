@@ -1,9 +1,9 @@
 require("dotenv").config;
 const { DbConection } = require("./src/database/db");
-const { app } = require("./src/app");
+const { server } = require("./src/app");
 DbConection()
   .then(() => {
-    app.listen(process.env.PORT || 4000, () => {
+    server.listen(process.env.PORT || 4000, () => {
       console.log(`Server Running on http://localhost:${process.env.PORT}`);
     });
   })

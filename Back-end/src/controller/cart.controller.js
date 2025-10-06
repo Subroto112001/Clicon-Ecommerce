@@ -163,44 +163,29 @@ exports.addToCart = asyncHandeler(async (req, res) => {
 
 // @desc decrease the cart quantity
 exports.decreaseQuantity = asyncHandeler(async (req, res) => {
-   const userid = req.userid || req.body.userid;
-   const { guestId, cartItemId } = req.body;
-  
+  const userid = req.userid || req.body.userid;
+  const { guestId, cartItemId } = req.body;
   if (!cartItemId) {
     throw new customError(400, "Cart item id is missing!");
   }
-
   // Build query - ensure we have either userid or guestId
   if (!userid && !guestId) {
     throw new customError(400, "User ID or Guest ID is required");
   }
 
   const query = userid ? { user: userid } : { guestId: guestId };
-
-
-  // Add logging to debug
-  console.log("Query:", query);
-  console.log("CartItemId:", cartItemId);
-  
   const cart = await cartModel.findOne(query);
-
   if (!cart) {
     throw new customError(404, "Cart not found for this user");
   }
-
-  
-
   // Find the cart item index using proper ObjectId comparison
   const index = cart.items.findIndex(
     (item) => item._id.toString() === cartItemId.toString()
   );
-
   if (index === -1) {
     throw new customError(404, "Cart item not found in cart");
   }
-
   const cartItem = cart.items[index];
-
   // Decrease quantity or remove item if quantity becomes 0
   if (cartItem.quantity > 1) {
     cartItem.quantity -= 1;
@@ -209,7 +194,6 @@ exports.decreaseQuantity = asyncHandeler(async (req, res) => {
     // Remove item if quantity would be 0
     cart.items.splice(index, 1);
   }
-
   // Recalculate total price and quantity
   const totalCalculated = cart.items.reduce(
     (acc, item) => {
@@ -226,21 +210,18 @@ exports.decreaseQuantity = asyncHandeler(async (req, res) => {
   // Update cart without reapplying coupon (to avoid incrementing useCount)
   cart.totalSubtotal = totalCalculated.totalPrice;
   cart.totalQuantity = totalCalculated.totalQuantity;
-  
   // Recalculate discount if coupon exists
   if (cart.coupon && totalCalculated.totalPrice > 0) {
     // Get coupon details without incrementing useCount
     const coupon = await couponModel.findById(cart.coupon);
-    
     if (coupon && Date.now() <= coupon.expire) {
       let discountAmount = 0;
-      
       if (coupon.discountType === "percentage") {
-        discountAmount = (totalCalculated.totalPrice * coupon.discountValue) / 100;
+        discountAmount =
+          (totalCalculated.totalPrice * coupon.discountValue) / 100;
       } else if (coupon.discountType === "tk") {
         discountAmount = coupon.discountValue;
       }
-      
       cart.finalAmount = totalCalculated.totalPrice - discountAmount;
       cart.discountType = coupon.discountType;
       cart.discountPrice = discountAmount;
@@ -264,7 +245,7 @@ exports.decreaseQuantity = asyncHandeler(async (req, res) => {
     res,
     200,
     cart.items.length === 0 || cartItem.quantity === 0
-      ? "Item removed from cart successfully" 
+      ? "Item removed from cart successfully"
       : "Cart item quantity decreased successfully",
     cart
   );
@@ -272,33 +253,20 @@ exports.decreaseQuantity = asyncHandeler(async (req, res) => {
 
 // @desc increase quantity
 exports.increaseQuantity = asyncHandeler(async (req, res) => {
-   const userid = req.userid || req.body.userid;
-   const { guestId, cartItemId } = req.body;
-  
+  const userid = req.userid || req.body.userid;
+  const { guestId, cartItemId } = req.body;
   if (!cartItemId) {
     throw new customError(400, "Cart item id is missing!");
   }
-
   // Build query - ensure we have either userid or guestId
   if (!userid && !guestId) {
     throw new customError(400, "User ID or Guest ID is required");
   }
-
   const query = userid ? { user: userid } : { guestId: guestId };
-
-
-  // Add logging to debug
-  console.log("Query:", query);
-  console.log("CartItemId:", cartItemId);
-  
   const cart = await cartModel.findOne(query);
-
   if (!cart) {
     throw new customError(404, "Cart not found for this user");
   }
-
-  
-
   // Find the cart item index using proper ObjectId comparison
   const index = cart.items.findIndex(
     (item) => item._id.toString() === cartItemId.toString()
@@ -335,21 +303,22 @@ exports.increaseQuantity = asyncHandeler(async (req, res) => {
   // Update cart without reapplying coupon (to avoid incrementing useCount)
   cart.totalSubtotal = totalCalculated.totalPrice;
   cart.totalQuantity = totalCalculated.totalQuantity;
-  
+
   // Recalculate discount if coupon exists
   if (cart.coupon && totalCalculated.totalPrice > 0) {
     // Get coupon details without incrementing useCount
     const coupon = await couponModel.findById(cart.coupon);
-    
+
     if (coupon && Date.now() <= coupon.expire) {
       let discountAmount = 0;
-      
+
       if (coupon.discountType === "percentage") {
-        discountAmount = (totalCalculated.totalPrice * coupon.discountValue) / 100;
+        discountAmount =
+          (totalCalculated.totalPrice * coupon.discountValue) / 100;
       } else if (coupon.discountType === "tk") {
         discountAmount = coupon.discountValue;
       }
-      
+
       cart.finalAmount = totalCalculated.totalPrice - discountAmount;
       cart.discountType = coupon.discountType;
       cart.discountPrice = discountAmount;
@@ -369,9 +338,32 @@ exports.increaseQuantity = asyncHandeler(async (req, res) => {
 
   await cart.save();
 
-  return apiResponse.senSuccess(
-    res,
-    200,"Cart Increase Successfully",
-    cart
-  );
+  return apiResponse.senSuccess(res, 200, "Cart Increase Successfully", cart);
 });
+
+// @desc delete cartItem
+exports.deleteCartItem = asyncHandeler(async (req, res) => {
+  
+  const userid = req.userid || req.body.userid;
+  const { guestId, cartID } = req.body;
+  if (!cartID) {
+    throw new customError(400, "Cart item id is missing!");
+  }
+  // Build query - ensure we have either userid or guestId
+  if (!userid && !guestId) {
+    throw new customError(400, "User ID or Guest ID is required");
+  }
+  const query = userid ? { user: userid } : { guestId: guestId };
+  const cart = await cartModel.findById({ _id: cartID });
+  if (!cart) {
+  throw new customError(404,'Cart not found');
+}
+ if(cart.user == userid){
+  await cartModel.deleteOne({ _id: cartID });
+  return apiResponse.senSuccess(res, 200, "Cart item deleted successfully");
+  }
+  if(cart.guestId == guestId){
+    await cartModel.deleteOne({ _id: cartID });
+    return apiResponse.senSuccess(res, 200, "Cart item deleted successfully");
+  }
+})
