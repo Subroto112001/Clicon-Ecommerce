@@ -4,8 +4,10 @@ const cookieParser = require("cookie-parser");
 const { globalErrorHandeler } = require("./utils/globalErrorHandeler");
 const app = express();
 const http = require("http");
-const server = http.createServer(app);
+const { initSocket } = require("./Soket/server");
 
+const server = http.createServer(app);
+const io = initSocket(server);
 /**
  * todo : All MidleWare
  * */
@@ -30,4 +32,4 @@ app.use(`/api/v1`, require("./routes/index"));
 
 app.use(globalErrorHandeler);
 
-module.exports = { server };
+module.exports = { server, io };
