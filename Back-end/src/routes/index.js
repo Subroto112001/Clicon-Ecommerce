@@ -11,4 +11,5 @@ _.use("/variant", require("./api/variant.api"));
 _.use("/customer-review", require("./api/customerReview.api"));
 _.use("/cupon", require("./api/cupon.api"));
 _.use("/cart", require("./api/cart.api"));
+_.use("/deliveryCharge", require("./api/deliveryCharge.api"))
 module.exports = _;
