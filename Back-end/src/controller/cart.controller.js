@@ -7,6 +7,7 @@ const productModel = require("../models/product.model");
 const variantMOdel = require("../models/variant.model");
 const { validateCart } = require("../validation/cart.validation");
 const couponModel = require("../models/cupon.model");
+const { getIo } = require("../Soket/server");
 
 // apply coupon to calculate discount price
 const applyCoupn = async (totalPrice = 0, couponCode = "") => {
@@ -152,6 +153,11 @@ exports.addToCart = asyncHandeler(async (req, res) => {
   cart.discountAmount = discountinfo.discountAmount;
 
   await cart.save();
+  const io = getIo();
+  io.to("123").emit("cart", {
+    message: "Product added to cart successfully",
+    cart: cart,
+  });
 
   return apiResponse.senSuccess(
     res,
@@ -241,6 +247,11 @@ exports.decreaseQuantity = asyncHandeler(async (req, res) => {
 
   await cart.save();
 
+  const io = getIo();
+  io.to("123").emit("cart", {
+    message: "Product decreased from cart successfully",
+    cart: "getCart",
+  });
   return apiResponse.senSuccess(
     res,
     200,
@@ -338,12 +349,16 @@ exports.increaseQuantity = asyncHandeler(async (req, res) => {
 
   await cart.save();
 
+  const io = getIo();
+  io.to("123").emit("cart", {
+    message: "Product increased in cart successfully",
+    cart: "getCart",
+  });
   return apiResponse.senSuccess(res, 200, "Cart Increase Successfully", cart);
 });
 
 // @desc delete cartItem
 exports.deleteCartItem = asyncHandeler(async (req, res) => {
-  
   const userid = req.userid || req.body.userid;
   const { guestId, cartID } = req.body;
   if (!cartID) {
@@ -356,14 +371,24 @@ exports.deleteCartItem = asyncHandeler(async (req, res) => {
   const query = userid ? { user: userid } : { guestId: guestId };
   const cart = await cartModel.findById({ _id: cartID });
   if (!cart) {
-  throw new customError(404,'Cart not found');
-}
- if(cart.user == userid){
-  await cartModel.deleteOne({ _id: cartID });
-  return apiResponse.senSuccess(res, 200, "Cart item deleted successfully");
+    throw new customError(404, "Cart not found");
   }
-  if(cart.guestId == guestId){
+  if (cart.user == userid) {
     await cartModel.deleteOne({ _id: cartID });
+    const io = getIo();
+    io.to("123").emit("cart", {
+      message: "Product deleted from cart successfully",
+      cart: "getCart",
+    });
     return apiResponse.senSuccess(res, 200, "Cart item deleted successfully");
   }
-})
+  if (cart.guestId == guestId) {
+    await cartModel.deleteOne({ _id: cartID });
+    const io = getIo();
+    io.to("123").emit("cart", {
+      message: "Product deleted from cart successfully",
+      cart: "getCart",
+    });
+    return apiResponse.senSuccess(res, 200, "Cart item deleted successfully");
+  }
+});

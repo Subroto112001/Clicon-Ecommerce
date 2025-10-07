@@ -12,7 +12,13 @@ module.exports = {
 
     // connection
     io.on("connection", (socket) => {
-      console.log("A client is connected", socket.id);
+      const userId = socket.handshake.query.userId;
+      console.log("A user is connected", userId);
+
+      if (userId) {
+        socket.join(userId);
+      }
+
       socket.on("disconnect", () => {
         console.log("A client is disconnected", socket.id);
       });
@@ -24,11 +30,10 @@ module.exports = {
       throw new customError(500, "Socket.IO error", error.message);
     });
   },
-    getIo: () => {
-        if (!io) {
-          throw new customError(500, "Socket.IO not initialized");
-        }
-        return io;
-      }
- 
+  getIo: () => {
+    if (!io) {
+      throw new customError(500, "Socket.IO not initialized");
+    }
+    return io;
+  },
 };
