@@ -2,6 +2,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const { customError } = require("../utils/customError");
+const { number, required } = require("joi");
 
 const orderSchema = new Schema({
   user: {
@@ -23,12 +24,17 @@ const orderSchema = new Schema({
     phone: { type: String, required: true },
     address: { type: String, required: false },
     email: { type: String },
+    deliveryZone: {
+      type: String
+    }
   },
   productWeight: {
     type: Number,
     default: 0,
   },
   deliveryCharge: { type: mongoose.Types.ObjectId },
+  discountAmount: { type: Number, default: 0 },
+  finalAmount: { type: Number, required: true },
   discountAmount: {
     type: Number,
     default: 0,

@@ -13,7 +13,6 @@ const variantSchema = new Schema(
     },
     slug: {
       type: String,
-      
     },
     variantName: {
       type: String,
@@ -44,9 +43,9 @@ const variantSchema = new Schema(
     },
     wholeSalePrice: {
       type: Number,
-      required: true, 
+      required: true,
     },
-    
+
     isActive: {
       type: Boolean,
       default: true,
@@ -57,6 +56,10 @@ const variantSchema = new Schema(
         url: { type: String },
       },
     ],
+    totalSale: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
