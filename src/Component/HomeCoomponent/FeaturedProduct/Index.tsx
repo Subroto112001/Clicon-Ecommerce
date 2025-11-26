@@ -12,6 +12,7 @@ import {
 } from "../../../Api/featuresProduct";
 import ProductCardLoading from "../../CoomonComponent/Skeliton/LoadingSkeliton";
 import ErrorComponent from "../../CoomonComponent/FeatureComponentError/FeaturecomponentError";
+import { useApp } from "../../../Hooks/Context/Contextapi";
 
 // Updated interface to match DummyJSON API response
 interface Category {
@@ -99,7 +100,8 @@ const FeaturedProduct: React.FC = () => {
     }
     refetchCategories();
   };
-
+ 
+  
   // Determine loading and error states
   const isLoading = categoryname ? isCategoryPending : isPending;
   const hasError = isError || isCategoryError || isCategoryProductError;

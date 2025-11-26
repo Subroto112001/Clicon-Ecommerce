@@ -1,6 +1,7 @@
 import React, { useState, type JSX } from "react";
 import Containere from "../../CoomonComponent/Container/Containere";
 import { icons } from "../../../Helpers/IconProvider";
+import { useApp } from "../../../Hooks/Context/Contextapi";
 const Categorydropdown = () => {
   const [categoryOpen, setCategoryOpen] = useState<Boolean>(false);
   const tranAndOthers: {
@@ -30,6 +31,8 @@ const Categorydropdown = () => {
     },
   ];
 
+  const { localCategory } = useApp();
+   const categories = Array.isArray(localCategory) ? localCategory : [];
 
   return (
     <div className="shadow-sm">
@@ -47,18 +50,11 @@ const Categorydropdown = () => {
                 <option className="body-small-500" value="AllCategory">
                   All Category
                 </option>
-                <option className="body-small-500" value="Mobile">
-                  Mobile
-                </option>
-                <option className="body-small-500" value="Laptop">
-                  Laptop
-                </option>
-                <option className="body-small-500" value="Camera">
-                  Camera
-                </option>
-                <option className="body-small-500" value="Accesorise">
-                  Accesorise
-                </option>
+                {categories.map((item, index) => (
+                  <option key={index} className="body-small-500" value={item.name}>
+                    {item.name}
+                  </option>
+                ))}
               </select>
               <span className="absolute top-1/2 -translate-1/2 left-[8.5%] text-[20px]">
                 {categoryOpen ? icons.upArrow : icons.downArrow}

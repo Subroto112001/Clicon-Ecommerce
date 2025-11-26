@@ -35,9 +35,15 @@ const CommonSLider: React.FC<propsType> = ({
       >
         {data?.map((item) => (
           <SwiperSlide key={item.id}>
-            <div className={imagestyle}>
-              <img src={item.images} alt={item.images} />
-              <p className={titlestyle}>{item.name}</p>
+            <div className="flex flex-col justify-center items-center gap-2">
+              <div className={imagestyle}>
+                <img
+                  src={item.image.url}
+                  alt={item.image}
+                  className="w-full h-full "
+                />
+              </div>
+                <p className={titlestyle}>{item.name}</p>
             </div>
           </SwiperSlide>
         ))}

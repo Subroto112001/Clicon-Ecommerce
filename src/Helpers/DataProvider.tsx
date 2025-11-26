@@ -1,17 +1,16 @@
 import Webcam from "../assets/Offer/Camera.png";
-import SmartPhone from "../assets/Offer/SmartPhone.png"
+import SmartPhone from "../assets/Offer/SmartPhone.png";
 import Keyboard from "../assets/Offer/Keyboard.png";
-import Gaming from "../assets/Offer/GamingCosole.png"
-import CCtv from "../assets/Offer/CCtv.png"
-import Mobile from "../assets/Offer/Mobile.png"
-import Television from '../assets/Offer/Televison.png'
+import Gaming from "../assets/Offer/GamingCosole.png";
+import CCtv from "../assets/Offer/CCtv.png";
+import Mobile from "../assets/Offer/Mobile.png";
+import Television from "../assets/Offer/Televison.png";
 import Drone from "../assets/Offer/Drone.png";
 import Speaker from "../assets/Offer/Speaker.png";
 
-import Android from "../assets/Offer/Android.png"
+import Android from "../assets/Offer/Android.png";
 import Joyestik from "../assets/Offer/Joyestik.png";
 import { subscribe } from "./ImageProvider";
-
 
 export type OfferFlashSaleType = {
   id: number;
@@ -33,8 +32,8 @@ export const OfferFlashSale: OfferFlashSaleType = [
     id: 2,
     name: "Simple Mobile 4G LTE Prepaid",
     desc: "Smartphone",
-      price: "$1,500",
-    image : SmartPhone
+    price: "$1,500",
+    image: SmartPhone,
   },
   {
     id: 3,
@@ -138,13 +137,11 @@ export const subcribeImage = [
   },
 ];
 
-
-
 type fotterinfo = {
-  id: number,
-  name: string,
-  path: string
-}[]
+  id: number;
+  name: string;
+  path: string;
+}[];
 
 export const fotterInfo: fotterinfo = [
   {
@@ -186,9 +183,9 @@ export const fotterInfo: fotterinfo = [
 
 // fottoer tag info
 type footertagType = {
-  id: number,
-  name : string
-}[]
+  id: number;
+  name: string;
+}[];
 export const footertag: footertagType = [
   {
     id: 1,
@@ -243,6 +240,3 @@ export const footertag: footertagType = [
     name: "Samsung",
   },
 ];
-
-
-

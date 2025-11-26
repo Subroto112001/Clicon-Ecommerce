@@ -2,6 +2,7 @@ import React from "react";
 import Containere from "../../CoomonComponent/Container/Containere";
 import { shopbycategoryImageHolder } from "../../../Helpers/ImageProvider";
 import CommonSLider from "../../CoomonComponent/CommonSLider";
+import { useApp } from "../../../Hooks/Context/Contextapi";
 
 const Categories = () => {
   interface Category {
@@ -46,7 +47,8 @@ const Categories = () => {
       images: shopbycategoryImageHolder.Televison,
     },
   ];
-
+const { localCategory } = useApp();
+   const categories = Array.isArray(localCategory) ? localCategory : [];
   return (
     <div className="pt-3.5!">
       <Containere>
@@ -56,9 +58,9 @@ const Categories = () => {
           </div>
           <div className="!mt-10">
             <CommonSLider
-              data={categoriholder}
+              data={categories}
               titlestyle={`body-medium-500 text-gray-900`}
-              imagestyle={`border border-gray-100 w-[200px] h-[2036] flex flex-col justify-center items-center p-5! gap-y-4`}
+              imagestyle={`border border-gray-100 w-[200px] h-[236px] flex flex-col justify-center items-center p-5! gap-y-4`}
             />
           </div>
         </div>

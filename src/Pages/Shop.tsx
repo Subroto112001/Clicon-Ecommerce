@@ -19,9 +19,8 @@ const Shop = () => {
   const [page, setPage] = useState<number>(1);
   const [pagePerShow, setPagePerShow] = useState<number>(8);
   const [dataLength, setDataLength] = useState<number>(0);
-
-  const { posts, loading, categorybydata, selectedCategoryName } = useApp();
   const [productdata, setProductdata] = useState<Post[]>([]);
+  const { posts, loading, categorybydata, selectedCategoryName } = useApp();
 
   useEffect(() => {
     if (categorybydata && categorybydata.length > 0) {

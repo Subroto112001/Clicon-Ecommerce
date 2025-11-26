@@ -20,6 +20,7 @@ interface AppContextType {
   }: {
     categoryname: string;
   }) => Promise<void>;
+  localCategory: string;
 }
 
 // 2) Create Context
@@ -35,7 +36,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [categorybydata, setCategorybydata] = useState<Post[]>([]);
   const [selectedCategoryName, setSelectedCategoryName] =
     useState<string>("All Products"); // Add this
-
+  const [localCategory, setLocalCategory] = useState<string>("");
   // product
   const fetchPosts = async () => {
     try {
@@ -69,7 +70,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       setLoading(false);
     }
   };
-
+  const fetchLocalCategory = async () => { 
+    try {
+      setLoading(true);
+      const res = await fetch(
+        "http://localhost:5000/api/v1/category/get-allCategory"
+      );
+      const data = await res.json();
+      setLocalCategory(data?.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
   // product by category
   const fetchProductByCategory = async ({
     categoryname,
@@ -97,6 +111,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     fetchCategory();
   }, []);
 
+  useEffect(() => {
+    fetchLocalCategory();
+  }, []);
+
 
   
 
@@ -111,7 +129,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         categorybydata,
         fetchProductByCategory,
         selectedCategoryName,
-        
+        localCategory,
       }}
     >
       {children}
