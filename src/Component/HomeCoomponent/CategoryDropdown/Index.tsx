@@ -1,9 +1,18 @@
 import React, { useState, type JSX } from "react";
 import Containere from "../../CoomonComponent/Container/Containere";
 import { icons } from "../../../Helpers/IconProvider";
-import { useApp } from "../../../Hooks/Context/Contextapi";
+import { useCategoryData } from "../../../Hooks/api-mutaion/api-mutation";
+
+interface Category {
+  id: number;
+  name: string;
+  icons: JSX.Element;
+}
+
 const Categorydropdown = () => {
   const [categoryOpen, setCategoryOpen] = useState<Boolean>(false);
+  const { data: categoriesData, error, isLoading } = useCategoryData();
+
   const tranAndOthers: {
     id: number;
     name: string;
@@ -31,35 +40,45 @@ const Categorydropdown = () => {
     },
   ];
 
-  const { localCategory } = useApp();
-   const categories = Array.isArray(localCategory) ? localCategory : [];
-
   return (
     <div className="shadow-sm">
       <Containere>
-        <div className="!py-3 grid grid-cols-2 items-center">
+        <div className="!py-3 flex justify-between items-center">
           <div className="flex items-center gap-x-2">
             {/* category dropdown */}
-            <div className="relative">
-              <select
-                name="category"
-                id="category"
-                className="!px-4 !pr-7 !py-5 bg-gray-50 body-small-500 appearance-none outline-none rounded cursor-pointer "
-                onClick={() => setCategoryOpen(!categoryOpen)}
-              >
-                <option className="body-small-500" value="AllCategory">
-                  All Category
-                </option>
-                {categories.map((item, index) => (
-                  <option key={index} className="body-small-500" value={item.name}>
-                    {item.name}
+            {isLoading ? (
+              <p>Loading...</p>
+            ) : error ? (
+              <p>Error loading categories</p>
+            ) : (
+              <div className="relative">
+                <select
+                  name="category"
+                  id="category"
+                  className="!px-4 !pr-7 !py-5 bg-gray-50 body-small-500 appearance-none outline-none rounded cursor-pointer "
+                  onClick={() => setCategoryOpen(!categoryOpen)}
+                >
+                  <option className="body-small-500" value="AllCategory">
+                    All Category
                   </option>
-                ))}
-              </select>
-              <span className="absolute top-1/2 -translate-1/2 left-[8.5%] text-[20px]">
-                {categoryOpen ? icons.upArrow : icons.downArrow}
-              </span>
-            </div>
+                  {categoriesData?.data?.map(
+                    (item: Category, index: number) => (
+                      <option
+                        key={index}
+                        className="body-small-500"
+                        value={item.name}
+                      >
+                        {item.name}
+                      </option>
+                    )
+                  )}
+                </select>
+                <span className="absolute top-1/2 -translate-y-1/2 right-[0.5%] text-[20px]">
+                  {categoryOpen ? icons.upArrow : icons.downArrow}
+                </span>
+              </div>
+            )}
+
             {/* track and compare and others*/}
             <div>
               <div className="flex flex-row  items-center gap-6">

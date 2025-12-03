@@ -47,8 +47,8 @@ const Categories = () => {
       images: shopbycategoryImageHolder.Televison,
     },
   ];
-const { localCategory } = useApp();
-   const categories = Array.isArray(localCategory) ? localCategory : [];
+  const { localCategory } = useApp();
+  const categories = Array.isArray(localCategory) ? localCategory : [];
   return (
     <div className="pt-3.5!">
       <Containere>
@@ -58,7 +58,7 @@ const { localCategory } = useApp();
           </div>
           <div className="!mt-10">
             <CommonSLider
-              data={categories}
+              categories={categories}
               titlestyle={`body-medium-500 text-gray-900`}
               imagestyle={`border border-gray-100 w-[200px] h-[236px] flex flex-col justify-center items-center p-5! gap-y-4`}
             />

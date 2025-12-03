@@ -1,5 +1,11 @@
-import React from 'react'
-import { Pagination, EffectFlip, A11y,Autoplay, EffectCards } from "swiper/modules";
+import React from "react";
+import {
+  Pagination,
+  EffectFlip,
+  A11y,
+  Autoplay,
+  EffectCards,
+} from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 // @ts-ignore
 import "swiper/css";
@@ -19,16 +25,14 @@ interface propsType {
   animationStyle: string;
   ispagination: boolean;
   data?: any[];
-  slideCount : number;
+  slideCount: number;
 }
-const SwiperSlider: React.FC<propsType> = ({
+const BigSwiperSlider: React.FC<propsType> = ({
   animationStyle = "flip",
   ispagination,
   data,
   slideCount,
 }) => {
- 
-
   return (
     <div>
       <Swiper
@@ -51,7 +55,7 @@ const SwiperSlider: React.FC<propsType> = ({
             <img
               src={item?.image?.url}
               alt={`banner-${item._id}`}
-              className="w-[450px] h-[250px]  rounded cursor-grab"
+              className="w-full  h-[550px] object-cover rounded cursor-grab"
             />
           </SwiperSlide>
         ))}
@@ -60,4 +64,4 @@ const SwiperSlider: React.FC<propsType> = ({
   );
 };
 
-export default React.memo(SwiperSlider);
+export default React.memo(BigSwiperSlider);

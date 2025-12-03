@@ -469,7 +469,7 @@ a {
 /* swiper pagination */
 .swiper-pagination {
   position: absolute !important;
-  left: -40% !important;
+  left: -35% !important;
   bottom: 10% !important;
 }
 

@@ -10,18 +10,17 @@ import { categoriesarrow } from "../../../Helpers/IconProvider";
 
 
 interface propsType {
-  data: any[];
+  categories: any[];
   titlestyle: string;
   imagestyle: string;
 }
 const CommonSLider: React.FC<propsType> = ({
-  data,
+  categories,
   titlestyle,
   imagestyle,
 }) => {
-  
   return (
-    <div className="relative">
+    <div className="relative mb-5">
       <Swiper
         modules={[Navigation, Scrollbar, A11y]}
         spaceBetween={20}
@@ -33,7 +32,7 @@ const CommonSLider: React.FC<propsType> = ({
         }}
         scrollbar={{ draggable: true }}
       >
-        {data?.map((item) => (
+        {categories?.map((item) => (
           <SwiperSlide key={item.id}>
             <div className="flex flex-col justify-center items-center gap-2">
               <div className={imagestyle}>
@@ -43,7 +42,7 @@ const CommonSLider: React.FC<propsType> = ({
                   className="w-full h-full "
                 />
               </div>
-                <p className={titlestyle}>{item.name}</p>
+              <p className={titlestyle}>{item.name}</p>
             </div>
           </SwiperSlide>
         ))}

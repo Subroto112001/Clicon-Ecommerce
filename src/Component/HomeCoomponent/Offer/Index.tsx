@@ -21,7 +21,7 @@ const Offer: React.FC = () => {
             initial={{ opacity: 0, x: -100 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, type: "spring", stiffness: 300 }}
-            viewport={{ once: false, amount: 0.5 }}
+            viewport={{ once: false, amount: 0.1 }}
           
             className="flex flex-col gap-4"
           >
@@ -40,7 +40,7 @@ const Offer: React.FC = () => {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, type: "spring", stiffness: 300 }}
-            viewport={{ once: false, amount: 0.5 }}
+            viewport={{ once: false, amount: 0.1 }}
             className="flex flex-col gap-4"
           >
             <h3 className="text-gray-900 body-medium-600">BEST SELLERS</h3>
@@ -58,7 +58,7 @@ const Offer: React.FC = () => {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, type: "spring", stiffness: 300 }}
-            viewport={{ once: false, amount: 0.5 }}
+            viewport={{ once: false, amount: 0.1 }}
             className="flex flex-col gap-4!"
           >
             <h3 className="text-gray-900 body-medium-600">TOP RATED</h3>
@@ -75,7 +75,7 @@ const Offer: React.FC = () => {
             initial={{ opacity: 0, x: 100 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, type: "spring", stiffness: 300 }}
-            viewport={{ once: false, amount: 0.5 }}
+            viewport={{ once: false, amount: 0.1 }}
             className="flex flex-col gap-4!"
           >
             <h3 className="text-gray-900 body-medium-600">NEW ARRIVAL</h3>

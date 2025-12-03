@@ -70,11 +70,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       setLoading(false);
     }
   };
+
+  
   const fetchLocalCategory = async () => { 
     try {
       setLoading(true);
       const res = await fetch(
-        "http://localhost:5000/api/v1/category/get-allCategory"
+        `http://localhost:5000/api/v1/category/get-allCategory`
       );
       const data = await res.json();
       setLocalCategory(data?.data);

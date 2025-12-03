@@ -1,76 +1,27 @@
-import React, { useState } from "react";
+import React from "react";
 import Containere from "../../CoomonComponent/Container/Containere";
-import { assets } from "../../../Helpers/ImageProvider";
+
 import SwiperSlider from "../../CoomonComponent/SwiperSlider/SwiperSlider";
+import { useBannerData } from "../../../Hooks/api-mutaion/api-mutation";
+import BigSwiperSlider from "../../CoomonComponent/SwiperSlider/BigSwiperSlider";
 
 
 
 const Banner = () => {
-  interface BannerItem {
-    id: number;
-    images: string; 
-  }
+ 
 
-  const [bannerlist, setBannerlist] = useState<BannerItem[]>([
-    {
-      id: 1,
-      images: assets.BannerLeft,
-    },
-    {
-      id: 2,
-      images: assets.BannerLeft,
-    },
-    {
-      id: 3,
-      images: assets.BannerLeft,
-    },
-    {
-      id: 4,
-      images: assets.BannerLeft,
-    },
-  ]);
-  const [bannerlist2, setBannerlist2] = useState<BannerItem[]>([
-    {
-      id: 1,
-      images : assets.BannerRight1    },
-    {
-      id: 2,
-      images : assets.BannerRight1    },
-    {
-      id: 3,
-      images : assets.BannerRight1    },
-    {
-      id: 4,
-      images : assets.BannerRight1    }
-  ])
-  const [bannerlist3, setBannerlist3] = useState<BannerItem[]>([
-    {
-      id: 1,
-      images: assets.BannerRight2,
-    },
-    {
-      id: 2,
-      images: assets.BannerRight2,
-    },
-    {
-      id: 3,
-      images: assets.BannerRight2,
-    },
-    {
-      id: 4,
-      images: assets.BannerRight2,
-    },
-  ]);
+const { data: bannerData, error: bannerError, isLoading: bannerLoading } = useBannerData();
+
   return (
     <>
       <div className="!py-10">
         <Containere>
           <div className="grid grid-cols-[2fr_1fr] gap-5">
             <div className="rounded w-[900px] h-[550px]">
-              <SwiperSlider
+              <BigSwiperSlider
                 animationStyle="flip"
                 ispagination={true}
-                data={bannerlist}
+                data={bannerData?.data}
                 slideCount={1}
               />
             </div>
@@ -79,7 +30,7 @@ const Banner = () => {
                 <SwiperSlider
                   animationStyle="cards"
                   ispagination={true}
-                  data={bannerlist2}
+                  data={bannerData?.data}
                   slideCount={1}
                 />
               </div>
@@ -87,7 +38,7 @@ const Banner = () => {
                 <SwiperSlider
                   animationStyle="cards"
                   ispagination={true}
-                  data={bannerlist3}
+                  data={bannerData?.data}
                   slideCount={1}
                 />
               </div>
