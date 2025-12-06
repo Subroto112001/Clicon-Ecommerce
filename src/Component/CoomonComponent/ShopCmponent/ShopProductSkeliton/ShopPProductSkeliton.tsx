@@ -9,22 +9,77 @@ interface ProductComponentProps {
   hotDeals?: boolean;
   item: any;
 }
+interface GoProductDetails {
+  availabilityStatus: boolean;
+  barCode: string;
+  brand: {
+    _id: string;
+    name: string;
+    im: string;
+  };
+  category: {
+    _id: string;
+    name: string;
+  };
+  color: string;
+  createdAt: string;
+  description: string;
+  groupUnit: string;
+  image: {
+    url: string;
+  }[];
+  isActive: boolean;
+  manufactureCountry: string;
+  minimumOrderQuantity: number;
+  name: string;
+  qrCode: string;
+  rating: number;
+  retailPrice: number;
+  returnPolicy: string;
+  reviews: Array<any>;
+  shippingInformation: string;
+  size: string;
+  sku: string;
+  slug: string;
+  stock: number;
+  stockAlert: boolean;
+  subCategory: string;
+  tags: string[];
+  totalSale: number;
+  unit: string;
+  updatedAt: string;
+  variantType: string;
+  warehouseLocation: string;
+  warrantyInformation: string;
+  wholesalePrice: number;
+  __v: number;
+  _id: string;
+}
 
 const ShopPProductSkeliton: React.FC<ProductComponentProps> = ({
   bestDeals = false,
   hotDeals = true,
   item,
 }) => {
+  console.log(item);
   return (
-    <div className="border border-gray-200 rounded bg-white inline-block p-6 relative group">
+    <div className="border border-gray-200 rounded bg-white inline-block p-4 relative group">
       <div className="flex-col gap-y-3 flex justify-center items-center relative">
         <div className="w-[202px] h-[172px]">
           <picture>
-            <img
-              src={item.images[0]}
-              alt={item.images[0]}
-              className="w-[full] h-[full] "
-            />
+            {item?.variantType == "MultipleVariant" ? (
+              <img
+                src={item?.variant?.image[0]?.url}
+                alt={item?.variant?.image[0]?.url}
+                className="w-full h-full "
+              />
+            ) : (
+              <img
+                src={item.image[0]?.url}
+                alt={item.image[0]?.url}
+                className="w-full h-full "
+              />
+            )}
           </picture>
         </div>
         <div className="w-[202px] h-[172px] absolute bg-[rgba(0,0,0)] opacity-0 group-hover:opacity-20 transition-all duration-300 top-0"></div>
@@ -36,7 +91,7 @@ const ShopPProductSkeliton: React.FC<ProductComponentProps> = ({
             <span className="text-gray-500">{`(${item.rating})`}</span>
           </div>
           <h3 className="max-w-[202px] body-small-600 cursor-pointer truncate hover:text-gray-600">
-            {item.title}
+            {item.name}
           </h3>
           <h3 className="max-w-[202px] body-small-400 truncate">
             {item.description}
@@ -46,12 +101,12 @@ const ShopPProductSkeliton: React.FC<ProductComponentProps> = ({
               {item.price}
             </span>
             <span className="text-secondary-500 body-small-600">
-              {item.discountPercentage
+              {/* {item.discountPercentage
                 ? `$${(
                     item.price -
                     (item.price * item.discountPercentage) / 100
                   ).toLocaleString()}`
-                : `$${item.price.toLocaleString()}`}
+                : `$${item.price.toLocaleString()}`} */}
             </span>
           </div>
         </div>

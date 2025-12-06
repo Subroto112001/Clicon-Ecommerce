@@ -36,3 +36,15 @@ export const useProductsData = (type = "single") => {
     },
   });
 };
+// product data fetch
+export const useProductsDataAll = () => {
+  return useQuery({
+    queryKey: ["getAllProductsWithoutVariation"],
+    queryFn: async () => {
+      const response = await api.get(
+        `/product/getall-Product-without-variation`
+      );
+      return response.data;
+    },
+  });
+};

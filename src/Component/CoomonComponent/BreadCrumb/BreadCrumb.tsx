@@ -30,7 +30,7 @@ const BreadCrumb = () => {
             <span className="text-lg">
               <MdArrowForwardIos />
             </span>
-            <span className="text-gray-500" key={index}>
+            <span className="text-gray-500 uppercase" key={index}>
               {name}
             </span>
           </div>

@@ -8,11 +8,59 @@ import ProductCardLoading from "../Component/CoomonComponent/Skeliton/LoadingSke
 import RightSideOfShopComponent from "../Component/ShopComponent/Leftside/Index";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallBack from "../Component/CoomonComponent/ErrorBoundary/ErrorFallBack";
+import { useProductsDataAll } from "../Hooks/api-mutaion/api-mutation";
 
 interface Post {
   id: number;
   title: string;
   body: string;
+}
+
+interface GoProductDetails {
+  availabilityStatus: boolean;
+  barCode: string;
+  brand: {
+    _id: string;
+    name: string;
+    im: string;
+  };
+  category: {
+    _id: string;
+    name: string;
+  };
+  color: string;
+  createdAt: string;
+  description: string;
+  groupUnit: string;
+  image: {
+    url: string;
+  }[];
+  isActive: boolean;
+  manufactureCountry: string;
+  minimumOrderQuantity: number;
+  name: string;
+  qrCode: string;
+  rating: number;
+  retailPrice: number;
+  returnPolicy: string;
+  reviews: Array<any>;
+  shippingInformation: string;
+  size: string;
+  sku: string;
+  slug: string;
+  stock: number;
+  stockAlert: boolean;
+  subCategory: string;
+  tags: string[];
+  totalSale: number;
+  unit: string;
+  updatedAt: string;
+  variantType: string;
+  warehouseLocation: string;
+  warrantyInformation: string;
+  wholesalePrice: number;
+  __v: number;
+  _id: string;
 }
 
 const Shop = () => {
@@ -21,6 +69,9 @@ const Shop = () => {
   const [dataLength, setDataLength] = useState<number>(0);
   const [productdata, setProductdata] = useState<Post[]>([]);
   const { posts, loading, categorybydata, selectedCategoryName } = useApp();
+  const { data, error, isError, isLoading } = useProductsDataAll();
+  const productAllData = data?.data;
+
 
   useEffect(() => {
     if (categorybydata && categorybydata.length > 0) {
@@ -33,9 +84,10 @@ const Shop = () => {
   /**
    *@desc: this useEffect will set the data length
    */
+
   useEffect(() => {
-    if (productdata) {
-      setDataLength(productdata.length);
+    if (productAllData) {
+      setDataLength(productAllData.length);
     }
   }, [productdata]);
 
@@ -145,17 +197,17 @@ const Shop = () => {
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 items-center">
+            <div className="flex flex-wrap gap-2 justify-center items-center">
               {loading
                 ? // Show loading skeletons when loading
                   Array.from({ length: 12 }).map((_, index) => (
                     <ProductCardLoading key={index} />
                   ))
                 : // Show actual products when loaded
-                  productdata
+                  productAllData
                     ?.slice((page - 1) * pagePerShow, page * pagePerShow)
-                    .map((item) => (
-                      <ShopPProductSkeliton key={item.id} item={item} />
+                    .map((item: GoProductDetails) => (
+                      <ShopPProductSkeliton key={item._id} item={item} />
                     ))}
             </div>
             {/* pagination */}

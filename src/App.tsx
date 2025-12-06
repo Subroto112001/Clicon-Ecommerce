@@ -7,6 +7,7 @@ import Shop from "./Pages/Shop";
 import { AppProvider } from "./Hooks/Context/Contextapi";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallBack from "./Component/CoomonComponent/ErrorBoundary/ErrorFallBack";
+import Product from "./Pages/Product";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,22 @@ const App = () => {
                   <ErrorBoundary FallbackComponent={ErrorFallBack}>
                     <Shop />
                   </ErrorBoundary>
+                }
+              />
+              <Route
+                path="/Product"
+                element={
+                  <ErrorBoundary FallbackComponent={ErrorFallBack}>
+                    <Product/>
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="*"
+                element={
+                  <div className="flex justify-center items-center h-screen">
+                    <h2 className="text-3xl font-bold">404 - Page Not Found</h2>
+                  </div>
                 }
               />
             </Route>

@@ -17,7 +17,7 @@ const Introducing: React.FC = () => {
 
  const banner = productsData?.data?.length - 1;
  const banner2 = productsData?.data?.length - 2;
-console.log(productsData?.data[banner2].image[0].url);
+
   return (
     <div className="py-18">
       <Containere>

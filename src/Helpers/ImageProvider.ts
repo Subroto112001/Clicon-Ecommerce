@@ -29,7 +29,7 @@ import toshiba from "../assets/HompageAssets/Subscribe/toshiba.png";
 
 import apple from '../assets/Footer/Apple.png' 
 import Playstore from '../assets/Footer/Playstore.png'
-
+import ProductImage from '../assets/ProductImage.png'
 // ---------------- Types ----------------
 type AssetType = {
   Black: string;
@@ -67,7 +67,9 @@ type SubscribeImageType = {
 };
 
 // subscribe type
-
+type ProductImageType = {
+  ProductImage: string;
+};
 
 // ---------------- Objects ----------------
 export const assets: AssetType = {
@@ -113,4 +115,7 @@ type footer = {
 export const fotterImage: footer = {
   Playstore,
   apple,
+};
+export const productImage: ProductImageType = {
+  ProductImage,
 };
