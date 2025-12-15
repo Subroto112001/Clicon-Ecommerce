@@ -3,6 +3,7 @@ import { CiHeart } from "react-icons/ci";
 import { GiShoppingCart } from "react-icons/gi";
 import { IoEyeOutline } from "react-icons/io5";
 import Star from "../../Star/Star";
+import { useNavigate } from "react-router-dom";
 
 interface ProductComponentProps {
   bestDeals?: boolean;
@@ -61,16 +62,25 @@ const ShopPProductSkeliton: React.FC<ProductComponentProps> = ({
   hotDeals = true,
   item,
 }) => {
+
+  const navigate = useNavigate();
   console.log(item);
+const handleGotoProductDetails = (slug: string) => {
+  // Navigate to product details page
+  navigate(`/product/${slug}`);
+}
   return (
-    <div className="border border-gray-200 rounded bg-white inline-block p-4 relative group">
+    <div
+      className="border border-gray-200 rounded bg-white inline-block p-4 relative group"
+      onClick={() => handleGotoProductDetails(item.slug)}
+    >
       <div className="flex-col gap-y-3 flex justify-center items-center relative">
         <div className="w-[202px] h-[172px]">
           <picture>
             {item?.variantType == "MultipleVariant" ? (
               <img
-                src={item?.variant?.image[0]?.url}
-                alt={item?.variant?.image[0]?.url}
+                src={item?.variant[0]?.image[0]?.url}
+                alt={item?.variant[0]?.image[0]?.url}
                 className="w-full h-full "
               />
             ) : (

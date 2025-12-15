@@ -8,6 +8,9 @@ import { AppProvider } from "./Hooks/Context/Contextapi";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallBack from "./Component/CoomonComponent/ErrorBoundary/ErrorFallBack";
 import Product from "./Pages/Product";
+import Login from "./Authentication/Login";
+import SignUpForm from "./Authentication/Signup";
+import CheckoutForm from "./Pages/CheckoutForm";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +21,8 @@ const App = () => {
       <AppProvider>
         <BrowserRouter>
           <Routes>
+            <Route path="/signup" element={<SignUpForm />} />
+            <Route path="/login" element={<Login />} />
             <Route element={<Parent />}>
               <Route
                 index
@@ -37,13 +42,22 @@ const App = () => {
                 }
               />
               <Route
-                path="/Product"
+                path="/Product/:slug"
                 element={
                   <ErrorBoundary FallbackComponent={ErrorFallBack}>
-                    <Product/>
+                    <Product />
                   </ErrorBoundary>
                 }
               />
+              <Route
+                path="/checkout"
+                element={
+                  <ErrorBoundary FallbackComponent={ErrorFallBack}>
+                    <CheckoutForm/>
+                  </ErrorBoundary>
+                }
+              />
+
               <Route
                 path="*"
                 element={

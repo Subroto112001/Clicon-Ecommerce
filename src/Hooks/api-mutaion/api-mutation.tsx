@@ -48,3 +48,27 @@ export const useProductsDataAll = () => {
     },
   });
 };
+
+// get single product data fetch
+export const useSingleProductData = (slug: string) => {
+  return useQuery({
+    queryKey: ["getSingleProduct", slug],
+    queryFn: async () => {
+      const response = await api.get(`/product/getSingle-Product/${slug}`);
+      return response.data;
+    },
+   
+  });
+};
+
+// create a cart mutation
+export const useCreateCartMutation = (values) => {
+   const queryClient = useQueryClient();
+ return useMutation({
+   mutationFn: async (values) => {
+     const response = await api.post("/cart/add-to-cart", values);
+     return response.data;
+   },
+ });
+};
+
