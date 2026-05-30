@@ -99,7 +99,7 @@ const InputField: React.FC<InputFieldProps> = ({
       type={type}
       name={name}
       id={name}
-      placeholder={label + (optional ? " (Optional)" : "")}
+      placeholder={placeholder || label + (optional ? " (Optional)" : "")}
       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm"
     />
   </div>

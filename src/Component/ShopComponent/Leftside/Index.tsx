@@ -12,7 +12,7 @@ const RightSideOfShopComponent = () => {
   const [value, setValue] = useState<[number, number]>([5, 85]);
 
   const [selectedOption, setSelectedOption] = useState<string>("$300 to $500");
-  const [randomTagsColor, setRandomTagsColor] = useState<string[]>([
+  const [randomTagsColor] = useState<string[]>([
     "primary-400",
     "primary-500",
     "gray-400",
@@ -35,11 +35,7 @@ const RightSideOfShopComponent = () => {
     }
   };
 
-  const throwTestError = () => {
-    throw new Error(
-      "Test Error: This is a simulated error to test ErrorBoundary!"
-    );
-  };
+  // removed unused test error helper
 
   // Query for all products
   const { data } = useQuery({
@@ -65,7 +61,7 @@ const RightSideOfShopComponent = () => {
     setSelectedBrands((prevSelectedBrands) =>
       prevSelectedBrands.includes(brandId)
         ? prevSelectedBrands.filter((id) => id !== brandId)
-        : [...prevSelectedBrands, brandId]
+        : [...prevSelectedBrands, brandId],
     );
   };
 

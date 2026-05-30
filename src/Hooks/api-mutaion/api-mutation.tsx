@@ -1,18 +1,16 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "../../lib/axios";
 
 // category data fetch
 export const useCategoryData = () => {
- return useQuery({
-   queryKey: ["getAllCategories"],
-   queryFn: async () => {
-     const response = await api.get("/category/get-allCategory");
-     return response.data;
-   },
- 
- });
+  return useQuery({
+    queryKey: ["getAllCategories"],
+    queryFn: async () => {
+      const response = await api.get("/category/get-allCategory");
+      return response.data;
+    },
+  });
 };
-
 
 // banner data fetch
 export const useBannerData = () => {
@@ -22,7 +20,6 @@ export const useBannerData = () => {
       const response = await api.get("/banner/get-all-banner");
       return response.data;
     },
-   
   });
 };
 
@@ -42,7 +39,7 @@ export const useProductsDataAll = () => {
     queryKey: ["getAllProductsWithoutVariation"],
     queryFn: async () => {
       const response = await api.get(
-        `/product/getall-Product-without-variation`
+        `/product/getall-Product-without-variation`,
       );
       return response.data;
     },
@@ -57,7 +54,6 @@ export const useSingleProductData = (slug: string) => {
       const response = await api.get(`/product/getSingle-Product/${slug}`);
       return response.data;
     },
-   
   });
 };
 interface payload {
@@ -72,7 +68,6 @@ interface payload {
 }
 // create a cart mutation
 export const useCreateCartMutation = () => {
-   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload: payload) => {
       const response = await api.post("/cart/add-to-cart", payload);
@@ -80,4 +75,3 @@ export const useCreateCartMutation = () => {
     },
   });
 };
-

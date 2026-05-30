@@ -1,22 +1,12 @@
 import React from "react";
 import Containere from "../../CoomonComponent/Container/Containere";
-import { Introducingimage } from "../../../Helpers/ImageProvider";
 import { motion } from "motion/react";
-import { useBannerData, useProductsData } from "../../../Hooks/api-mutaion/api-mutation";
+import { useProductsData } from "../../../Hooks/api-mutaion/api-mutation";
 const Introducing: React.FC = () => {
+  const { data: productsData } = useProductsData();
 
-
-
- const {
-    data: productsData,
-    error: productsError,
-    isLoading: productsLoading,
-    isError: productsIsError,
-  } = useProductsData();
-
-
- const banner = productsData?.data?.length - 1;
- const banner2 = productsData?.data?.length - 2;
+  const banner = productsData?.data?.length - 1;
+  const banner2 = productsData?.data?.length - 2;
 
   return (
     <div className="py-18">

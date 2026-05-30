@@ -1,4 +1,4 @@
-import React, { useEffect, useState, type JSX } from "react";
+import React, { useState } from "react";
 import Containere from "../../CoomonComponent/Container/Containere";
 import { featureProductImage } from "../../../Helpers/ImageProvider";
 import {
@@ -14,8 +14,7 @@ import {
   GetProductByCCategory,
 } from "../../../Api/featuresProduct";
 import ProductCardLoading from "../../CoomonComponent/Skeliton/LoadingSkeliton";
-import ErrorComponent from "../../CoomonComponent/FeatureComponentError/FeaturecomponentError";
-import { useApp } from "../../../Hooks/Context/Contextapi";
+// Removed unused imports: ErrorComponent, useApp
 import {
   useCategoryData,
   useProductsData,
@@ -82,10 +81,8 @@ interface GoProductDetails {
 }
 
 const FeaturedProduct: React.FC = () => {
-  const [products, setProducts] = useState<any[]>([]);
-  const [categoryname, setCategoryname] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const { data: categoriesData, error, isLoading, isError } = useCategoryData();
+  const { data: categoriesData } = useCategoryData();
   const {
     data: productsData,
     error: productsError,
@@ -95,18 +92,15 @@ const FeaturedProduct: React.FC = () => {
 
   const handleCategoryData = (
     categorySlug: string,
-    categoryDisplayName: string
+    categoryDisplayName: string,
   ) => {
     if (categoryDisplayName === "All") {
-      setCategoryname("");
       setSelectedCategory("All");
     } else {
-      setCategoryname(categorySlug);
       setSelectedCategory(categoryDisplayName);
     }
   };
 
- 
   return (
     <div>
       <Containere>

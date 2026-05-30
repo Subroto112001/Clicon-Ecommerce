@@ -69,9 +69,8 @@ const Shop = () => {
   const [dataLength, setDataLength] = useState<number>(0);
   const [productdata, setProductdata] = useState<Post[]>([]);
   const { posts, loading, categorybydata, selectedCategoryName } = useApp();
-  const { data, error, isError, isLoading } = useProductsDataAll();
+  const { data } = useProductsDataAll();
   const productAllData = data?.data;
-
 
   useEffect(() => {
     if (categorybydata && categorybydata.length > 0) {

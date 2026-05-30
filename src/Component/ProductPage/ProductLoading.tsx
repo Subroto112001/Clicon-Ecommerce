@@ -1,6 +1,5 @@
-import React from "react";
+// React import not required with the JSX transform
 import Containere from "../CoomonComponent/Container/Containere";
-
 
 const ProductDetailLoading = () => {
   return (
