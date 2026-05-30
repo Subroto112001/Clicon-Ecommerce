@@ -135,8 +135,6 @@ const Product = () => {
   ];
 
   // 2. Discount Price Calculation (DERIVED VALUE)
-  const retailPrice = productData?.retailPrice || 0;
-  let finalPrice = retailPrice;
   let discountDisplayValue = 0; // Value for "% OFF" or "Tk OFF" badge
 
   const discount = productData?.discount;
@@ -147,19 +145,14 @@ const Product = () => {
       discount.discountValueByPercentage
     ) {
       const percentage = discount.discountValueByPercentage;
-      const discountValue = (retailPrice * percentage) / 100;
-      finalPrice = retailPrice - discountValue;
       discountDisplayValue = percentage;
     } else if (
       discount.discountType === "flat" &&
       discount.discountValueByFlat
     ) {
       // Assuming a flat discount type exists
-      finalPrice = retailPrice - discount.discountValueByFlat;
       discountDisplayValue = discount.discountValueByFlat;
     }
-    // Ensure the final price is not negative
-    finalPrice = Math.max(0, finalPrice);
   }
   // set guest id
   useEffect(() => {

@@ -10,65 +10,17 @@ interface ProductComponentProps {
   hotDeals?: boolean;
   item: any;
 }
-interface GoProductDetails {
-  availabilityStatus: boolean;
-  barCode: string;
-  brand: {
-    _id: string;
-    name: string;
-    im: string;
-  };
-  category: {
-    _id: string;
-    name: string;
-  };
-  color: string;
-  createdAt: string;
-  description: string;
-  groupUnit: string;
-  image: {
-    url: string;
-  }[];
-  isActive: boolean;
-  manufactureCountry: string;
-  minimumOrderQuantity: number;
-  name: string;
-  qrCode: string;
-  rating: number;
-  retailPrice: number;
-  returnPolicy: string;
-  reviews: Array<any>;
-  shippingInformation: string;
-  size: string;
-  sku: string;
-  slug: string;
-  stock: number;
-  stockAlert: boolean;
-  subCategory: string;
-  tags: string[];
-  totalSale: number;
-  unit: string;
-  updatedAt: string;
-  variantType: string;
-  warehouseLocation: string;
-  warrantyInformation: string;
-  wholesalePrice: number;
-  __v: number;
-  _id: string;
-}
-
 const ShopPProductSkeliton: React.FC<ProductComponentProps> = ({
   bestDeals = false,
   hotDeals = true,
   item,
 }) => {
-
   const navigate = useNavigate();
   console.log(item);
-const handleGotoProductDetails = (slug: string) => {
-  // Navigate to product details page
-  navigate(`/product/${slug}`);
-}
+  const handleGotoProductDetails = (slug: string) => {
+    // Navigate to product details page
+    navigate(`/product/${slug}`);
+  };
   return (
     <div
       className="border border-gray-200 rounded bg-white inline-block p-4 relative group"

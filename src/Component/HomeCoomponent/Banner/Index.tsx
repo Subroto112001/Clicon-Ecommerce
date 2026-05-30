@@ -5,12 +5,8 @@ import SwiperSlider from "../../CoomonComponent/SwiperSlider/SwiperSlider";
 import { useBannerData } from "../../../Hooks/api-mutaion/api-mutation";
 import BigSwiperSlider from "../../CoomonComponent/SwiperSlider/BigSwiperSlider";
 
-
-
 const Banner = () => {
- 
-
-const { data: bannerData, error: bannerError, isLoading: bannerLoading } = useBannerData();
+  const { data: bannerData } = useBannerData();
 
   return (
     <>

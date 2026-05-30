@@ -1,17 +1,20 @@
 import axios from "axios";
 
-interface AxiosResponse{
-    status: string;
+interface AxiosResponse {
+  status: string;
 }
 
+const backendDomain = (import.meta.env.VITE_BACKEND_DOMAIN ?? "").replace(
+  /\/+$/,
+  "",
+);
+const baseUrl = (import.meta.env.VITE_BASE_URL ?? "").replace(/^\/+|\/+$/g, "");
+const apiBaseUrl = `${backendDomain}/${baseUrl}`;
+
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_BACKEND_DOMAIN}/${
-    import.meta.env.VITE_BASE_URL
-  }`,
+  baseURL: apiBaseUrl,
   withCredentials: true,
 });
-
-
 
 // Add a request interceptor
 api.interceptors.request.use(
@@ -23,7 +26,7 @@ api.interceptors.request.use(
   },
   function (error) {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Add a response interceptor
@@ -38,13 +41,11 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const response = await axios.post(
-          `${import.meta.env.VITE_BACKEND_DOMAIN}/${
-            import.meta.env.VITE_BASE_URL
-          }/auth/get-refreshtoken`,
+          `${apiBaseUrl}/auth/get-refreshtoken`,
           {},
           {
             withCredentials: true,
-          }
+          },
         );
 
         if (!((response.data as AxiosResponse).status === "OK")) {
@@ -54,10 +55,9 @@ api.interceptors.response.use(
         if (response.data?.data?.accessToken) {
           const newAccessToken = response.data.data.accessToken;
           localStorage.setItem("accessToken", newAccessToken);
-          api.defaults.headers.common[
-            "Authorization"
-          ] = `Bearer ${newAccessToken}`;
-originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+          api.defaults.headers.common["Authorization"] =
+            `Bearer ${newAccessToken}`;
+          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
           return api(originalRequest);
         }
       } catch (error) {
@@ -67,8 +67,7 @@ originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
-
 
 export { api };

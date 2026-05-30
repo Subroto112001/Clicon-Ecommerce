@@ -10,7 +10,7 @@ interface Category {
 }
 
 const Categorydropdown = () => {
-  const [categoryOpen, setCategoryOpen] = useState<Boolean>(false);
+  const [categoryOpen, setCategoryOpen] = useState<boolean>(false);
   const { data: categoriesData, error, isLoading } = useCategoryData();
 
   const tranAndOthers: {

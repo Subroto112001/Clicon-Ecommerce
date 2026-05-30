@@ -6,7 +6,7 @@ import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const DownNavbar = () => {
-  const [typeChange, setTypeChange] = useState<Boolean>(false);
+  const [typeChange, setTypeChange] = useState<boolean>(false);
 
   const handlechangeInput = (
     event: React.ChangeEvent<HTMLInputElement>

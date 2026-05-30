@@ -1,10 +1,9 @@
-import React from "react";
 import { useLocation, Link } from "react-router-dom";
 import { AiOutlineHome } from "react-icons/ai";
 import { MdArrowForwardIos } from "react-icons/md";
 const BreadCrumb = () => {
   const { pathname } = useLocation();
-  let pathnameArray = pathname.split("/").filter((path) => path);
+  const pathnameArray = pathname.split("/").filter((path) => path);
 
   let BreadCrumbPath = "";
   return (
@@ -35,7 +34,10 @@ const BreadCrumb = () => {
             </span>
           </div>
         ) : (
-          <div key={index} className="flex flex-row items-center text-xl gap-1.5">
+          <div
+            key={index}
+            className="flex flex-row items-center text-xl gap-1.5"
+          >
             <span className="text-lg">
               <MdArrowForwardIos />
             </span>

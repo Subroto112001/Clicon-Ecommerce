@@ -69,12 +69,12 @@ const SignUpForm: React.FC = () => {
       // The API endpoint is /auth/registartion based on your Postman screenshot
       const response = await api.post<RegistrationResponse>(
         "/auth/registartion",
-        dataToSend
+        dataToSend,
       );
 
       setMessage(
         response.data.message ||
-          "Registration Successful! Check Your Email/Phone for verification."
+          "Registration Successful! Check Your Email/Phone for verification.",
       );
       setIsError(false);
 
@@ -89,12 +89,13 @@ const SignUpForm: React.FC = () => {
       if (response?.status === 201) {
         navigate("/login");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Registration Error:", error);
 
       // Extract error message from the response object
       const errorMessage =
-        error.response?.data?.message ||
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message ||
         "An unexpected error occurred during registration.";
 
       setMessage(errorMessage);

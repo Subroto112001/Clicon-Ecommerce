@@ -16,53 +16,6 @@ interface Post {
   body: string;
 }
 
-interface GoProductDetails {
-  availabilityStatus: boolean;
-  barCode: string;
-  brand: {
-    _id: string;
-    name: string;
-    im: string;
-  };
-  category: {
-    _id: string;
-    name: string;
-  };
-  color: string;
-  createdAt: string;
-  description: string;
-  groupUnit: string;
-  image: {
-    url: string;
-  }[];
-  isActive: boolean;
-  manufactureCountry: string;
-  minimumOrderQuantity: number;
-  name: string;
-  qrCode: string;
-  rating: number;
-  retailPrice: number;
-  returnPolicy: string;
-  reviews: Array<any>;
-  shippingInformation: string;
-  size: string;
-  sku: string;
-  slug: string;
-  stock: number;
-  stockAlert: boolean;
-  subCategory: string;
-  tags: string[];
-  totalSale: number;
-  unit: string;
-  updatedAt: string;
-  variantType: string;
-  warehouseLocation: string;
-  warrantyInformation: string;
-  wholesalePrice: number;
-  __v: number;
-  _id: string;
-}
-
 const Shop = () => {
   const [page, setPage] = useState<number>(1);
   const [pagePerShow, setPagePerShow] = useState<number>(8);
@@ -88,7 +41,7 @@ const Shop = () => {
     if (productAllData) {
       setDataLength(productAllData.length);
     }
-  }, [productdata]);
+  }, [productAllData]);
 
   /**
    *@desc: total page calculation
@@ -205,7 +158,7 @@ const Shop = () => {
                 : // Show actual products when loaded
                   productAllData
                     ?.slice((page - 1) * pagePerShow, page * pagePerShow)
-                    .map((item: GoProductDetails) => (
+                    .map((item: { _id: string }) => (
                       <ShopPProductSkeliton key={item._id} item={item} />
                     ))}
             </div>

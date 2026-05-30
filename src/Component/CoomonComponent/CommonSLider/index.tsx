@@ -1,16 +1,19 @@
 import React from "react";
 
-import {  A11y, Navigation, Scrollbar } from "swiper/modules";
+import { A11y, Navigation, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-// @ts-ignore
+// @ts-expect-error Swiper CSS modules are intentionally imported for side effects.
 import "swiper/css";
-// @ts-ignore
+// @ts-expect-error Swiper CSS modules are intentionally imported for side effects.
 import "swiper/css/navigation";
 import { categoriesarrow } from "../../../Helpers/IconProvider";
 
-
 interface propsType {
-  categories: any[];
+  categories: Array<{
+    id: string | number;
+    name: string;
+    image: { url: string };
+  }>;
   titlestyle: string;
   imagestyle: string;
 }
@@ -38,7 +41,7 @@ const CommonSLider: React.FC<propsType> = ({
               <div className={imagestyle}>
                 <img
                   src={item.image.url}
-                  alt={item.image}
+                  alt={item.name}
                   className="w-full h-full "
                 />
               </div>

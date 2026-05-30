@@ -1,20 +1,10 @@
 import React, { useState } from "react";
 import Containere from "../../CoomonComponent/Container/Containere";
 import { featureProductImage } from "../../../Helpers/ImageProvider";
-import {
-  Button,
-  SecondButton,
-} from "../../CoomonComponent/CoomonEliment/Button";
+import { SecondButton } from "../../CoomonComponent/CoomonEliment/Button";
 import { icons } from "../../../Helpers/IconProvider";
 import ProductComponent from "../../CoomonComponent/ProdcutComponent";
-import { useQuery } from "@tanstack/react-query";
-import {
-  GetFeatureProductCategory,
-  GetfeaturesProduct,
-  GetProductByCCategory,
-} from "../../../Api/featuresProduct";
 import ProductCardLoading from "../../CoomonComponent/Skeliton/LoadingSkeliton";
-// Removed unused imports: ErrorComponent, useApp
 import {
   useCategoryData,
   useProductsData,
@@ -30,7 +20,7 @@ import {
 interface Category {
   id: number;
   name: string;
-  icons: JSX.Element;
+  icons: React.ReactNode;
 }
 
 interface GoProductDetails {
@@ -82,7 +72,7 @@ interface GoProductDetails {
 
 const FeaturedProduct: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const { data: categoriesData } = useCategoryData();
+  const { data: categoriesData, isLoading } = useCategoryData();
   const {
     data: productsData,
     error: productsError,
@@ -91,7 +81,7 @@ const FeaturedProduct: React.FC = () => {
   } = useProductsData();
 
   const handleCategoryData = (
-    categorySlug: string,
+    _categorySlug: string,
     categoryDisplayName: string,
   ) => {
     if (categoryDisplayName === "All") {

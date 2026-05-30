@@ -8,13 +8,6 @@ interface FormData {
   password: string;
 }
 
-// Define the structure of the successful API response data
-interface LoginSuccessResponse {
-  accessToken: string;
-  username: string;
-  email: string | null;
-}
-
 // Define the structure of the Unverified Account API response data
 interface UnverifiedResponse {
   verified: false;
@@ -28,7 +21,7 @@ const Login: React.FC = () => {
     contact: "",
     password: "",
   });
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const [message, setMessage] = useState<string>("");
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -82,15 +75,15 @@ const navigate = useNavigate();
         if (responseData.accessToken) {
           localStorage.setItem("accessToken", responseData.accessToken);
           setMessage(
-            `Welcome back, ${responseData.username}! Login successful.`
+            `Welcome back, ${responseData.username}! Login successful.`,
           );
           setIsError(false);
-         navigate("/");
+          navigate("/");
         } else if (responseData.verified === false) {
           // --- 🟡 Handle Unverified Account (OTP Sent) ---
           const unverifiedData = responseData as UnverifiedResponse;
           setMessage(
-            `Account not verified. Verification code sent to ${unverifiedData.maskedContact}. Please check your ${unverifiedData.verificationMethod}.`
+            `Account not verified. Verification code sent to ${unverifiedData.maskedContact}. Please check your ${unverifiedData.verificationMethod}.`,
           );
           setIsError(false);
           // Optional: Show a new OTP input form here.
@@ -98,11 +91,12 @@ const navigate = useNavigate();
           throw new Error("Invalid response structure from server.");
         }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Login Error:", error);
 
       const errorMessage =
-        error.response?.data?.message ||
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message ||
         "An unexpected error occurred during login or communication.";
 
       setMessage(errorMessage);

@@ -1,15 +1,21 @@
-import React from 'react'
-import { Pagination, EffectFlip, A11y,Autoplay, EffectCards } from "swiper/modules";
+import React from "react";
+import {
+  Pagination,
+  EffectFlip,
+  A11y,
+  Autoplay,
+  EffectCards,
+} from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-// @ts-ignore
+// @ts-expect-error Swiper CSS modules are intentionally imported for side effects.
 import "swiper/css";
-// @ts-ignore
+// @ts-expect-error Swiper CSS modules are intentionally imported for side effects.
 import "swiper/css/navigation";
-// @ts-ignore
+// @ts-expect-error Swiper CSS modules are intentionally imported for side effects.
 import "swiper/css/pagination";
 
 interface leftBottomType {
-  _id: number;
+  _id: string | number;
   image: {
     url: string;
   };
@@ -18,8 +24,8 @@ interface leftBottomType {
 interface propsType {
   animationStyle: string;
   ispagination: boolean;
-  data?: any[];
-  slideCount : number;
+  data?: Array<{ _id: number | string; image: { url: string } }>;
+  slideCount: number;
 }
 const SwiperSlider: React.FC<propsType> = ({
   animationStyle = "flip",
@@ -27,8 +33,6 @@ const SwiperSlider: React.FC<propsType> = ({
   data,
   slideCount,
 }) => {
- 
-
   return (
     <div>
       <Swiper

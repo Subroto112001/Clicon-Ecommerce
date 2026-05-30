@@ -1,52 +1,9 @@
 import React from "react";
 import Containere from "../../CoomonComponent/Container/Containere";
-import { shopbycategoryImageHolder } from "../../../Helpers/ImageProvider";
 import CommonSLider from "../../CoomonComponent/CommonSLider";
 import { useApp } from "../../../Hooks/Context/Contextapi";
 
 const Categories = () => {
-  interface Category {
-    id: number;
-    name: string;
-    images: string; // or the actual type of shopbycategoryImageHolder values
-  }
-  const categoriholder: Category[] = [
-    {
-      id: 1,
-      name: "Computer & Laptop",
-      images: shopbycategoryImageHolder.Computer,
-    },
-    {
-      id: 2,
-      name: "Mobile",
-      images: shopbycategoryImageHolder.Mobile,
-    },
-    {
-      id: 3,
-      name: "Headphones",
-      images: shopbycategoryImageHolder.HeadPhone,
-    },
-    {
-      id: 4,
-      name: "Accessories",
-      images: shopbycategoryImageHolder.Keyboard,
-    },
-    {
-      id: 5,
-      name: "Accessories",
-      images: shopbycategoryImageHolder.Camera,
-    },
-    {
-      id: 6,
-      name: "TV & Homes",
-      images: shopbycategoryImageHolder.Televison,
-    },
-    {
-      id: 7,
-      name: "TV & Homes",
-      images: shopbycategoryImageHolder.Televison,
-    },
-  ];
   const { localCategory } = useApp();
   const categories = Array.isArray(localCategory) ? localCategory : [];
   return (

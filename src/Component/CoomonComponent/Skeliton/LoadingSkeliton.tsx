@@ -1,5 +1,3 @@
-import React from "react";
-
 const ProductCardLoading = () => {
   return (
     <div className="border border-gray-700 rounded bg-white inline-block p-6 relative">
@@ -39,6 +37,5 @@ const ProductCardLoading = () => {
     </div>
   );
 };
-
 
 export default ProductCardLoading;
