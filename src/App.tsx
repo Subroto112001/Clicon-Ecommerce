@@ -11,7 +11,9 @@ import Product from "./Pages/Product";
 import Login from "./Authentication/Login";
 import SignUpForm from "./Authentication/Signup";
 import CheckoutForm from "./Pages/CheckoutForm";
-
+import ShopingCard from "./Pages/ShopingCard";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -20,6 +22,15 @@ const App = () => {
       <ReactQueryDevtools initialIsOpen={false} />
       <AppProvider>
         <BrowserRouter>
+          <ToastContainer
+            position="top-center"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={true}
+            closeOnClick
+            pauseOnHover
+            theme="colored"
+          />
           <Routes>
             <Route path="/signup" element={<SignUpForm />} />
             <Route path="/login" element={<Login />} />
@@ -53,7 +64,15 @@ const App = () => {
                 path="/checkout"
                 element={
                   <ErrorBoundary FallbackComponent={ErrorFallBack}>
-                    <CheckoutForm/>
+                    <CheckoutForm />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="/shopingcard"
+                element={
+                  <ErrorBoundary FallbackComponent={ErrorFallBack}>
+                    <ShopingCard />
                   </ErrorBoundary>
                 }
               />

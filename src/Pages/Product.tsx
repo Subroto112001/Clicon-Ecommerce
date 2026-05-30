@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { useParams } from "react-router-dom";
-
-// Assuming these are paths to existing files/helpers:
-import { productImage } from "../Helpers/ImageProvider";
+import { v4 as uuidv4 } from "uuid";
 import Containere from "../Component/CoomonComponent/Container/Containere";
 import BreadCrumb from "../Component/CoomonComponent/BreadCrumb/BreadCrumb";
 import { Staricon } from "../Helpers/IconProvider";
@@ -63,7 +61,11 @@ interface ProductDetails {
   updatedAt: string;
   // NOTE: productData.variant.image was accessed on variant array, assuming only one element is used
   variant: {
-    image: {
+    _id?: string;
+    color?: string[];
+    stock?: number;
+    stockVariant?: number;
+    image?: {
       url: string;
     }[];
   }[];
@@ -74,6 +76,16 @@ interface ProductDetails {
   __v: number;
   _id: string;
   discount: Discount | null; // Added discount field and allowed it to be null
+}
+interface AddToCartPayload {
+  user: string | null;
+  guestId: string | null;
+  product: string | null;
+  variant: string | null;
+  quantity: number;
+  color: string;
+  size: string;
+  coupon: string | null;
 }
 
 const ShippingData = [
@@ -94,6 +106,9 @@ const Product = () => {
   const [activeTab, setActiveTab] = useState("Description");
   const [discountAmount, setDiscountAmount] = useState<number>(0);
   const [productQuantity, setProductQuantity] = useState<number>(1);
+  const [selectedVariant, setSelectedVariant] = useState<any>(null);
+
+  const [colorSelected, setColorSelected] = useState<string>("");
   const [stock, setStock] = useState<number>(0);
   const tabs = [
     "Description",
@@ -105,12 +120,10 @@ const Product = () => {
 
   // Fetch product data
   const { data, isError, isPending, isLoading } = useSingleProductData(
-    slug || ""
+    slug || "",
   );
-  // const createAddtoCart = useCreateCartMutation();
-  const productData = data?.data;
-  console.log(productData?.variant);
- 
+  const createAddtoCart = useCreateCartMutation();
+  const productData = data?.data as ProductDetails | undefined;
 
   // 1. Feature Data relies on productData, so it must be defined *after* fetching
   const FeaturesData = [
@@ -148,6 +161,14 @@ const Product = () => {
     // Ensure the final price is not negative
     finalPrice = Math.max(0, finalPrice);
   }
+  // set guest id
+  useEffect(() => {
+    let guestId = localStorage.getItem("guestId");
+    if (!guestId) {
+      guestId = uuidv4().split("-")[0];
+      localStorage.setItem("guestId", guestId);
+    }
+  }, [productData]);
   useEffect(() => {
     if (
       productData?.discount &&
@@ -160,14 +181,71 @@ const Product = () => {
       setDiscountAmount(discountAmountt);
     }
   }, [productData]);
+  // Set default variant and color on initial data load
+  useEffect(() => {
+    if (productData) {
+      if (
+        productData.variantType === "MultipleVariant" &&
+        Array.isArray(productData.variant) &&
+        productData.variant.length > 0
+      ) {
+        const firstVariant = productData.variant[0];
+        setSelectedVariant(firstVariant);
 
+        if (
+          Array.isArray(firstVariant.color) &&
+          firstVariant.color.length > 0
+        ) {
+          setColorSelected(firstVariant.color[0]);
+        }
+      } else {
+        if (Array.isArray(productData.color) && productData.color.length > 0) {
+          setColorSelected(productData.color[0]);
+        }
+      }
+    }
+  }, [productData]);
   // stock identyfication
   useEffect(() => {
     if (productData?.variantType === "MultipleVariant") {
-      setStock(productData?.variant?.stockVariant);
+      const sv =
+        selectedVariant?.stock ??
+        (Array.isArray(productData.variant)
+          ? (productData.variant[0]?.stock ?? 0)
+          : 0);
+      setStock(sv);
     } else {
-      setStock(productData?.stock);
+      setStock(productData?.stock ?? 0);
     }
+  }, [productData, selectedVariant]);
+
+  // color will store
+  const colors: string[] = useMemo(() => {
+    if (!productData) return [];
+
+    // 🔹 MULTIPLE VARIANT → collect from variants
+    if (
+      productData.variantType === "MultipleVariant" &&
+      Array.isArray(productData.variant)
+    ) {
+      return [
+        ...new Set(
+          productData.variant.flatMap((v: any) =>
+            Array.isArray(v?.color) ? v.color : [],
+          ),
+        ),
+      ];
+    }
+
+    // 🔹 SINGLE VARIANT → productData.color
+    if (
+      productData.variantType === "SingleVariant" &&
+      Array.isArray(productData.color)
+    ) {
+      return productData.color;
+    }
+
+    return [];
   }, [productData]);
 
   // --- LOADING/ERROR STATE ---
@@ -186,11 +264,15 @@ const Product = () => {
       </Containere>
     );
   }
-  const allImageUrls: string[] = productData?.variant?.flatMap((item: any) =>
-    item?.image?.map((img: any) => img.url)
-  );
 
-  console.log(allImageUrls);
+  // Declare allImageUrls outside the if block
+  const allImageUrls: string[] =
+    productData?.variantType === "MultipleVariant" && productData?.variant
+      ? productData.variant.flatMap((item: any) =>
+          item?.image?.map((img: any) => img.url),
+        )
+      : [];
+
   // --- TAB CONTENT RENDERER ---
   const renderContent = () => {
     if (activeTab === "Description") {
@@ -202,7 +284,7 @@ const Product = () => {
               Description
             </h3>
             <p className="text-gray-600 mb-4 leading-relaxed">
-              {productData.description}
+              {productData?.description}
             </p>
           </div>
 
@@ -260,23 +342,51 @@ const Product = () => {
       setProductQuantity(productQuantity - 1);
     }
   };
-  interface CartDetails {
-    productId: string;
-    quantity: number;
-  }
-  const handleAddtoCart = () => {
-    alert("Add to cart clicked");
-    // const cartData: CartDetails = {
-    //   productId: productData?._id,
-    //   quantity: productQuantity,
 
-    // };
-    // createAddtoCart.mutate(cartData );
+  const handleAddtoCart = async () => {
+    if (productData?.variantType == "MultipleVariant") {
+      const payload: AddToCartPayload = {
+        user: null,
+        guestId: localStorage.getItem("guestId"),
+        product: null,
+        variant: selectedVariant?._id,
+        quantity: productQuantity,
+        color: colorSelected,
+        size: "L",
+        coupon: null,
+      };
+
+      const res = await createAddtoCart.mutateAsync(payload);
+      console.log(res);
+    } else {
+      const payload: AddToCartPayload = {
+        user: null,
+        guestId: localStorage.getItem("guestId"),
+        product: productData?._id ?? null,
+        variant: null,
+        quantity: productQuantity,
+        color: colorSelected,
+        size: "L",
+        coupon: null,
+      };
+
+      const res = await createAddtoCart.mutateAsync(payload);
+      console.log(res);
+    }
+  };
+
+  const handleSetVariant = (color: string) => {
+    if (productData?.variantType === "MultipleVariant") {
+      const foundVariant = productData.variant.find((v: any) =>
+        v.color.includes(color),
+      );
+      setSelectedVariant(foundVariant);
+      setColorSelected(color);
+    }
   };
 
   return (
     <div>
-      {/* 🍎 Header and Breadcrumb */}
       <div className="py-6 bg-gray-100">
         <Containere>
           <BreadCrumb />
@@ -339,7 +449,7 @@ const Product = () => {
                             className="w-[100px] h-[80px] rounded-md object-cover cursor-pointer border-2 border-transparent hover:border-blue-500 transition"
                           />
                         </SwiperSlide>
-                      )
+                      ),
                     )
                   : productData?.image?.map((item: any, index: number) => (
                       <SwiperSlide key={index}>
@@ -473,40 +583,38 @@ const Product = () => {
             {/* Variant Selectors */}
             <div className="grid grid-cols-2 gap-4 mt-2">
               {/* Color Selector */}
-              {productData?.color && productData.color.length > 0 && (
+              {colors.length > 0 && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Color
                   </label>
+
                   <div className="flex gap-3">
-                    {productData.color.map((color: string) => (
+                    {colors.map((color) => (
                       <div
                         key={color}
-                        // NOTE: You'll need logic to determine the active color.
-                        // The hardcoded color logic has been kept from the original code.
-                        className={`w-8 h-8 rounded-full border-2 cursor-pointer ${
-                          color === "Red"
-                            ? "border-blue-500 ring-2 ring-blue-500"
+                        onClick={() => handleSetVariant(color)} // Using the separate function
+                        className={`w-8 h-8 rounded-full border-2 cursor-pointer hover:scale-110 transition ${
+                          selectedVariant?.color?.includes(color)
+                            ? "border-orange-500 scale-110"
                             : "border-gray-300"
                         }`}
-                        style={{
-                          backgroundColor:
-                            color === "Red" ? "#AA4A44" : "#4B5563",
-                        }}
-                      ></div>
+                        style={{ backgroundColor: color.toLowerCase() }}
+                        title={color}
+                      />
                     ))}
                   </div>
                 </div>
               )}
 
               {/* Size Selector */}
-              {productData?.size && productData.size.length > 0 && (
+              {(productData?.size?.length ?? 0) > 0 && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Size
                   </label>
                   <select className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                    {productData.size.map((size: string) => (
+                    {productData?.size?.map((size: string) => (
                       <option
                         key={size}
                         value={size}
@@ -520,8 +628,8 @@ const Product = () => {
                 </div>
               )}
             </div>
-            {(productData?.size?.length > 0 ||
-              productData?.color?.length > 0) && <hr className="my-3" />}
+            {((productData?.size?.length ?? 0) > 0 ||
+              (productData?.color?.length ?? 0) > 0) && <hr className="my-3" />}
 
             {/* Quantity & Actions */}
             <div className="flex items-center gap-4">

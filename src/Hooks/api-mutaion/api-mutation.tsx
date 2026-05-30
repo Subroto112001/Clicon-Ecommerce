@@ -60,15 +60,24 @@ export const useSingleProductData = (slug: string) => {
    
   });
 };
-
+interface payload {
+  user: string | null; // logged-in user id
+  guestId: string | null; // guest session id
+  product: string | null; // product id
+  variant: string | null; // variant id (nullable)
+  quantity: number;
+  color: string;
+  size: string;
+  coupon: string | null;
+}
 // create a cart mutation
-export const useCreateCartMutation = (values) => {
+export const useCreateCartMutation = () => {
    const queryClient = useQueryClient();
- return useMutation({
-   mutationFn: async (values) => {
-     const response = await api.post("/cart/add-to-cart", values);
-     return response.data;
-   },
- });
+  return useMutation({
+    mutationFn: async (payload: payload) => {
+      const response = await api.post("/cart/add-to-cart", payload);
+      return response.data;
+    },
+  });
 };
 
